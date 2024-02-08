@@ -2,7 +2,7 @@
 # [A2] Island ca.mcmaster.se2aa4.island.team00.Explorer
 
 - Authors:
-  - [Sankalpa, Chhetri Dhaka](chhets1@mcmaster.ca) 
+  - [Sankalpa, Chhetri Dhakal](chhets1@mcmaster.ca) 
   - [Ibrahim, Tariq](tariqi2@mcmaster.ca)
   - [Firstname_3, Lastname_3](macid@mcmaster.ca)
 
