@@ -4,7 +4,7 @@
 - Authors:
   - [Sankalpa, Chhetri Dhakal](chhets1@mcmaster.ca) 
   - [Ibrahim, Tariq](tariqi2@mcmaster.ca)
-  - [Firstname_3, Lastname_3](macid@mcmaster.ca)
+  - [Kevin, Zhu](zhuk41@mcmaster.ca)
 
 ## Product Description
 
