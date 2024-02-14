@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.teamXXX;
+package ca.mcmaster.se2aa4.island.team209;
 
 import static eu.ace_design.island.runner.Runner.run;
 
@@ -19,7 +19,7 @@ public class Runner {
                     .storingInto("./outputs")
                     .withName("Island")
                     .fire();
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.err.println(e.getMessage());
             e.printStackTrace(System.err);
             System.exit(1);
