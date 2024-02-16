@@ -1,6 +1,6 @@
 package ca.mcmaster.se2aa4.island.team209;
 
-public class DroneMovement extends Drone {
+public class ExploringDrone extends Drone {
     
     public int batteryUsagePerTurn = 0;
     public void __init__(int x, int y, int Battery, Direction dir){
