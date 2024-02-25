@@ -30,6 +30,7 @@ public class Map {
         this.creeks = creeks;
     }
 
+    // get site
     public Point getEmergencySite() {
         return emergencySite;
     }
