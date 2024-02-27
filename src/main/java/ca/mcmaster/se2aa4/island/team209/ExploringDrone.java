@@ -1,16 +1,18 @@
 package ca.mcmaster.se2aa4.island.team209;
 
 public class ExploringDrone extends Drone {
-    
+
     public int batteryUsagePerTurn = 0;
-    public void __init__(int x, int y, int Battery, Direction dir){
+
+    public ExploringDrone(int x, int y, int Battery, Direction dir) {
         coords.x = x;
-        coords.y=y;
+        coords.y = y;
         battery = Battery;
-        myDir = dir; 
+        myDir = dir;
     }
-    public void turnRight(){
-        switch (myDir){
+
+    public void turnRight() {
+        switch (myDir) {
             case NORTH:
                 myDir = Direction.EAST;
                 coords.x++;
@@ -35,9 +37,9 @@ public class ExploringDrone extends Drone {
                 myDir = Direction.NORTH;
         }
     }
-    
-    public void turnLeft(){
-        switch (myDir){
+
+    public void turnLeft() {
+        switch (myDir) {
             case NORTH:
                 myDir = Direction.WEST;
                 coords.x--;
@@ -62,8 +64,9 @@ public class ExploringDrone extends Drone {
                 myDir = Direction.NORTH;
         }
     }
-    public void goForward(){
-        switch (myDir){
+
+    public void goForward() {
+        switch (myDir) {
             case NORTH:
                 coords.y--;
                 break;
@@ -79,5 +82,5 @@ public class ExploringDrone extends Drone {
             default:
                 myDir = Direction.NORTH;
         }
-    }  
+    }
 }

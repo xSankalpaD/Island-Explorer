@@ -23,12 +23,30 @@ public class Explorer implements IExplorerRaid {
         logger.info("Battery level is {}", batteryLevel);
     }
 
+    /*
+     * @Override
+     * public String takeDecision() {
+     * JSONObject decision = new JSONObject();
+     * decision.put("action", "echo");
+     * decision.put("parameters", new JSONObject().put("direction", "S")); // Change
+     * the direction as needed
+     * logger.info("** Decision: {}", decision.toString());
+     * return decision.toString();
+     * }
+     */
     @Override
     public String takeDecision() {
         JSONObject decision = new JSONObject();
-        decision.put("action", "stop"); // we stop the exploration immediately
+        decision.put("action", "fly");
+
         logger.info("** Decision: {}", decision.toString());
-        return decision.toString();
+        acknowledgeResults(decision.toString());
+        JSONObject decision2 = new JSONObject();
+        decision.put("action", "echo");
+        decision.put("parameters", new JSONObject().put("direction", "S"));
+
+        logger.info("** Decision: {}", decision2.toString());
+        return decision2.toString();
     }
 
     @Override

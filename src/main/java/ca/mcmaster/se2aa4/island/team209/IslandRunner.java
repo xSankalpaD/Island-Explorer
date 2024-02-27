@@ -5,7 +5,24 @@ import java.util.List;
 
 import eu.ace_design.island.game.PointOfInterest;
 
-public class IslandRunner {
+public class IslandRunner implements ExploreAlgorithm {
+
+    Explorer radio = new Explorer();
+
+    ExploringDrone myDrone = new ExploringDrone(1, 1, 999999, Direction.EAST);
+
+    public void topLeftIslandFinder() {
+        while (true) {
+            String a = radio.takeDecision();
+            radio.acknowledgeResults(a);
+        }
+        // String b = radio.takeDecision(1);
+        // System.out.println(b);
+    }
+
+    public void IslandTransversal() {
+    }
+
     public static void main(String[] args) {
         String filename = args[0];
         try {
