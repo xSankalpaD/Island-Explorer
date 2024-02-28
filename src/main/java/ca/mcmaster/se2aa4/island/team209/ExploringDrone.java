@@ -13,74 +13,74 @@ public class ExploringDrone extends Drone {
 
     public void turnRight() {
         switch (myDir) {
-            case NORTH:
-                myDir = Direction.EAST;
+            case N:
+                myDir = Direction.E;
                 coords.x++;
                 coords.y--;
                 break;
-            case EAST:
-                myDir = Direction.SOUTH;
+            case E:
+                myDir = Direction.S;
                 coords.x++;
                 coords.y++;
                 break;
-            case WEST:
-                myDir = Direction.NORTH;
+            case W:
+                myDir = Direction.N;
                 coords.x--;
                 coords.y--;
                 break;
-            case SOUTH:
-                myDir = Direction.WEST;
+            case S:
+                myDir = Direction.W;
                 coords.x--;
                 coords.y++;
                 break;
             default:
-                myDir = Direction.NORTH;
+                myDir = Direction.N;
         }
     }
 
     public void turnLeft() {
         switch (myDir) {
-            case NORTH:
-                myDir = Direction.WEST;
+            case N:
+                myDir = Direction.W;
                 coords.x--;
                 coords.y--;
                 break;
-            case EAST:
-                myDir = Direction.NORTH;
+            case E:
+                myDir = Direction.N;
                 coords.x++;
                 coords.y--;
                 break;
-            case WEST:
-                myDir = Direction.SOUTH;
+            case W:
+                myDir = Direction.S;
                 coords.x--;
                 coords.y++;
                 break;
-            case SOUTH:
-                myDir = Direction.EAST;
+            case S:
+                myDir = Direction.E;
                 coords.x++;
                 coords.y++;
                 break;
             default:
-                myDir = Direction.NORTH;
+                myDir = Direction.N;
         }
     }
 
     public void goForward() {
         switch (myDir) {
-            case NORTH:
+            case N:
                 coords.y--;
                 break;
-            case EAST:
+            case E:
                 coords.x++;
                 break;
-            case WEST:
+            case W:
                 coords.x--;
                 break;
-            case SOUTH:
+            case S:
                 coords.y++;
                 break;
             default:
-                myDir = Direction.NORTH;
+                myDir = Direction.N;
         }
     }
 }
