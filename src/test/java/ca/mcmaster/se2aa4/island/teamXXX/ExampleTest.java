@@ -3,7 +3,6 @@ package ca.mcmaster.se2aa4.island.teamXXX;
 import org.junit.jupiter.api.Test;
 
 import ca.mcmaster.se2aa4.island.team209.IslandRunner;
-import ca.mcmaster.se2aa4.island.team209.IslandScanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -8,8 +8,8 @@ public class Map {
     private List<Point> creeks; // List of creeks on the island
     private Point emergencySite; // Location of the emergency site
 
-    public Map(int[][] terrain, List<Point> creeks, Point emergencySite) {
-        this.terrain = terrain;
+    public Map(List<Point> creeks, Point emergencySite) {
+        // this.terrain = terrain;
         this.creeks = creeks;
         this.emergencySite = emergencySite;
     }

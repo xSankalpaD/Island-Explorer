@@ -11,6 +11,7 @@ import org.json.JSONTokener;
 public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
+    boolean state = true;
 
     @Override
     public void initialize(String s) {
@@ -37,16 +38,22 @@ public class Explorer implements IExplorerRaid {
     @Override
     public String takeDecision() {
         JSONObject decision = new JSONObject();
-        decision.put("action", "fly");
+        if (state == true) {
+            decision.put("action", "fly");
+            logger.info("** Decision: {}", decision.toString());
+            state = false;
 
-        logger.info("** Decision: {}", decision.toString());
-        acknowledgeResults(decision.toString());
-        JSONObject decision2 = new JSONObject();
-        decision.put("action", "echo");
-        decision.put("parameters", new JSONObject().put("direction", "S"));
+        } else if (state == false) {
+            JSONObject dir = new JSONObject();
 
-        logger.info("** Decision: {}", decision2.toString());
-        return decision2.toString();
+            decision.put("action", "echo");
+            dir.put("direction", "E");
+            decision.put("parameters", dir);
+            state = true;
+        }
+
+        logger.info("** Decision: {}");
+        return decision.toString();
     }
 
     @Override
