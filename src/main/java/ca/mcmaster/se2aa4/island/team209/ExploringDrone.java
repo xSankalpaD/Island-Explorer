@@ -4,13 +4,10 @@ public class ExploringDrone extends Drone {
 
     public int batteryUsagePerTurn = 0;
 
-    public ExploringDrone(int x, int y, int Battery, Direction dir) {
-        coords.x = x;
-        coords.y = y;
-        battery = Battery;
-        myDir = dir;
+    public ExploringDrone(int x, int y, int Battery, Direction dir, int bUsage){
+        super(x, y, Battery, dir);
+        this.batteryUsagePerTurn = bUsage;   
     }
-
     public void turnRight() {
         switch (myDir) {
             case N:
