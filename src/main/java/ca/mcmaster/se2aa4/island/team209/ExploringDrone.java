@@ -4,8 +4,7 @@ public class ExploringDrone extends Drone {
     
     public int batteryUsagePerTurn = 0;
     public void __init__(int x, int y, int Battery, Direction dir){
-        coords[0] = x;
-        coords[1] = y;
+        coords = new Coordinate(x,y);
         battery = Battery;
         myDir = dir; 
     }
@@ -13,23 +12,23 @@ public class ExploringDrone extends Drone {
         switch (myDir){
             case NORTH:
                 myDir = Direction.EAST;
-                coords[0]++;
-                coords[1]--;
+                coords.setX(coords.getX()+1);
+                coords.setY(coords.getY()-1);
                 break;
             case EAST:
                 myDir = Direction.SOUTH;
-                coords[0]++;
-                coords[1]++;
+                coords.setX(coords.getX()+1);
+                coords.setY(coords.getY()+1);
                 break;
             case WEST:
                 myDir = Direction.NORTH;
-                coords[0]--;
-                coords[1]--;
+                coords.setX(coords.getX()-1);
+                coords.setY(coords.getY()-1);
                 break;
             case SOUTH:
                 myDir = Direction.WEST;
-                coords[0]--;
-                coords[1]++;
+                coords.setX(coords.getX()-1);
+                coords.setY(coords.getY()+1);
                 break;
             default:
                 myDir = Direction.NORTH;
@@ -40,23 +39,23 @@ public class ExploringDrone extends Drone {
         switch (myDir){
             case NORTH:
                 myDir = Direction.WEST;
-                coords[0]--;
-                coords[1]--;
+                coords.setX(coords.getX()-1);
+                coords.setY(coords.getY()-1);
                 break;
             case EAST:
                 myDir = Direction.NORTH;
-                coords[0]++;
-                coords[1]--;
+                coords.setX(coords.getX()+1);
+                coords.setY(coords.getY()-1);
                 break;
             case WEST:
                 myDir = Direction.SOUTH;
-                coords[0]--;
-                coords[1]++;
+                coords.setX(coords.getX()-1);
+                coords.setY(coords.getY()+1);
                 break;
             case SOUTH:
                 myDir = Direction.EAST;
-                coords[0]++;
-                coords[1]++;
+                coords.setX(coords.getX()+1);
+                coords.setY(coords.getY()+1);
                 break;
             default:
                 myDir = Direction.NORTH;
@@ -65,16 +64,16 @@ public class ExploringDrone extends Drone {
     public void goForward(){
         switch (myDir){
             case NORTH:
-                coords[1]--;
+                coords.setY(coords.getY()-1);
                 break;
             case EAST:
-                coords[0]++;
+                coords.setX(coords.getX()+1);
                 break;
             case WEST:
-                coords[0]--;
+                coords.setX(coords.getX()-1);
                 break;
             case SOUTH:
-                coords[1]++;
+                coords.setY(coords.getY()+1);
                 break;
             default:
                 myDir = Direction.NORTH;
