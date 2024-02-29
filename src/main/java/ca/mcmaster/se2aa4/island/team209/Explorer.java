@@ -9,8 +9,11 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class Explorer implements IExplorerRaid {
-
+    Direction direction;
     private final Logger logger = LogManager.getLogger();
+    int state = 0;
+    int counter = 0;
+    String found;
 
     @Override
     public void initialize(String s) {
@@ -18,6 +21,7 @@ public class Explorer implements IExplorerRaid {
         JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));
         logger.info("** Initialization info:\n {}", info.toString(2));
         String direction = info.getString("heading");
+        this.direction = Direction.valueOf(direction);
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
@@ -26,8 +30,31 @@ public class Explorer implements IExplorerRaid {
     @Override
     public String takeDecision() {
         JSONObject decision = new JSONObject();
-        decision.put("action", "stop"); // we stop the exploration immediately
-        logger.info("** Decision: {}", decision.toString());
+        if (state == 0) {
+            decision.put("action", "fly");
+            logger.info("** Decision: {}", decision.toString());
+            state = 1;
+
+        } else if (state == 1) {
+            JSONObject dir = new JSONObject();
+
+            decision.put("action", "echo");
+            dir.put("direction", "S");
+            decision.put("parameters", dir);
+            state = 2;
+
+        } else if (state == 2) {
+
+            decision.put("action", "scan");
+            state = 0;
+            counter++;
+            if (counter == 50 || found == "7000") {
+                decision.put("action", "stop");
+            }
+
+        }
+
+        logger.info("** Decision: {}");
         return decision.toString();
     }
 
@@ -41,6 +68,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("The status of the drone is {}", status);
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
+
     }
 
     @Override

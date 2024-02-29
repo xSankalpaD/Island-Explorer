@@ -3,32 +3,17 @@ package ca.mcmaster.se2aa4.island.team209;
 import java.net.http.WebSocket;
 
 abstract class Drone {
-    protected Coordinate coords;
+    protected Point coords = new Point(0, 0);
     protected int battery;
-    protected Direction myDir; 
-    public enum Direction{
-        NORTH,
-        EAST,
-        WEST,
-        SOUTH
-    }
-    public abstract void __init__(int x, int y, int Battery, Direction dir);
-    public void setCoordinates(int x, int y){
-        coords = new Coordinate(x,y);
-    }
-    public Coordinate getCoordinates(){
-        return coords;
-    } 
-    public void setBattery(int Battery){
-        battery = Battery;
-    }
-    public int getBattery(){
+    protected Direction myDir;
+
+    // public abstract void Drone(int x, int y, int Battery, Direction dir);
+    public int getBattery() {
         return battery;
     }
-    public void setDirection(Direction newDir){
-        myDir = newDir;   
-    }
-    public Direction getDirection(){
+
+    public Direction getDirection() {
         return myDir;
     }
+
 }
