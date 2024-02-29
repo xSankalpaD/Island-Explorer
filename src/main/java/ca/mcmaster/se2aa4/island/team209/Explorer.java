@@ -48,7 +48,7 @@ public class Explorer implements IExplorerRaid {
             decision.put("action", "scan");
             state = 0;
             counter++;
-            if (counter == 50 || found == "7000") {
+            if (counter == 50) {
                 decision.put("action", "stop");
             }
 
