@@ -26,7 +26,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             default -> Direction.E;
         };
         map_width = 0;
-        drone = new ExploringDrone(0,0,info.getInt("budget"), direction);
+        drone = new ExploringDrone(0,0,info.getInt("budget"), direction,0);
         island_found = false;
         width_found = false;
 
