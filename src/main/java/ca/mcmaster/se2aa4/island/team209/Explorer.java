@@ -14,10 +14,12 @@ public class Explorer implements IExplorerRaid {
     int state = 0;
     int counter = 0;
     String found;
+    ExploreAlgorithm control;
 
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
+        logger.info(s);
         JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));
         logger.info("** Initialization info:\n {}", info.toString(2));
         String direction = info.getString("heading");
@@ -25,12 +27,12 @@ public class Explorer implements IExplorerRaid {
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
+        control = new IslandAlgorithm(s);
     }
 
     @Override
     public String takeDecision() {
-        JSONObject decision = new JSONObject();
-        if (state == 0) {
+        /*if (state == 0) {
             decision.put("action", "fly");
             logger.info("** Decision: {}", decision.toString());
             state = 1;
@@ -52,10 +54,10 @@ public class Explorer implements IExplorerRaid {
                 decision.put("action", "stop");
             }
 
-        }
-
-        logger.info("** Decision: {}");
-        return decision.toString();
+        }*/
+        String decision = control.decision();
+        logger.info("** Decision: {}",decision);
+        return decision;
     }
 
     @Override
@@ -68,6 +70,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("The status of the drone is {}", status);
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
+        control.takeInfo(extraInfo.toString());
 
     }
 

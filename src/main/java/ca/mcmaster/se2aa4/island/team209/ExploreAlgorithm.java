@@ -1,7 +1,7 @@
 package ca.mcmaster.se2aa4.island.team209;
 
 public interface ExploreAlgorithm {
-    public void topLeftIslandFinder();
-
-    public void IslandTransversal();
+    public String decision();
+    public void takeInfo(String info);
+    public String finalReport();
 }
