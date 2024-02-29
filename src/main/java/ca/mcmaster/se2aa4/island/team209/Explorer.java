@@ -11,7 +11,9 @@ import org.json.JSONTokener;
 public class Explorer implements IExplorerRaid {
     Direction direction;
     private final Logger logger = LogManager.getLogger();
-    int state = 0;
+    State state = State.FIND;
+    FindState finding = FindState.FLY;
+    ScanState scanning = ScanState.PENDING;
     int counter = 0;
     String found;
 
@@ -30,30 +32,39 @@ public class Explorer implements IExplorerRaid {
     @Override
     public String takeDecision() {
         JSONObject decision = new JSONObject();
-        if (state == 0) {
+        
+        if (state == State.STOP) decision.put("action", "stop");
+
+        else if (finding == FindState.FLY) {
             decision.put("action", "fly");
             logger.info("** Decision: {}", decision.toString());
-            state = 1;
+            finding = FindState.TEMP;
 
-        } else if (state == 1) {
+        } else if (finding == FindState.SEARCH) {
             JSONObject dir = new JSONObject();
 
             decision.put("action", "echo");
             dir.put("direction", "S");
             decision.put("parameters", dir);
-            state = 2;
+            finding = FindState.FLY;
 
-        } else if (state == 2) {
+        } else if (finding == FindState.WAIT) {
+            decision.put("action", "fly");
+            logger.info("** Decision: {}", decision.toString());
+            finding = FindState.TURN1;
+            state = State.STOP;
+
+        } else if (finding == FindState.TEMP) {
 
             decision.put("action", "scan");
-            state = 0;
+            finding = FindState.SEARCH;
+            counter = 0;
             counter++;
             if (counter == 50) {
                 decision.put("action", "stop");
             }
 
         }
-
         logger.info("** Decision: {}");
         return decision.toString();
     }
@@ -68,7 +79,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("The status of the drone is {}", status);
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
-
+        if (extraInfo.toString().contains("GROUND")){finding = FindState.WAIT;}
     }
 
     @Override
