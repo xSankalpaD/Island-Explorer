@@ -1,8 +1,7 @@
 package ca.mcmaster.se2aa4.island.team209;
 
-import java.net.http.WebSocket;
 
-import org.apache.logging.log4j.core.util.SystemClock;
+
 
 public abstract class Drone {
     protected Point coords;

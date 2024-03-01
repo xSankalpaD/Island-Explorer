@@ -2,7 +2,8 @@ package ca.mcmaster.se2aa4.island.team209;
 
 public class ExploringDrone extends Drone {
 
-    public int batteryUsagePerTurn = 0;
+    public int batteryUsagePerTurn;
+    private Direction lastScan;
 
     public ExploringDrone(int x, int y, int Battery, Direction dir, int bUsage){
         super(x, y, Battery, dir);
@@ -79,5 +80,11 @@ public class ExploringDrone extends Drone {
             default:
                 myDir = Direction.N;
         }
+    }
+    public Direction getLastScan(){
+        return lastScan;
+    }
+    public void setLastScan(Direction d){
+        lastScan = d;
     }
 }
