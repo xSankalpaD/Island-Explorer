@@ -32,29 +32,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
-        /*if (state == 0) {
-            decision.put("action", "fly");
-            logger.info("** Decision: {}", decision.toString());
-            state = 1;
-
-        } else if (state == 1) {
-            JSONObject dir = new JSONObject();
-
-            decision.put("action", "echo");
-            dir.put("direction", "S");
-            decision.put("parameters", dir);
-            state = 2;
-
-        } else if (state == 2) {
-
-            decision.put("action", "scan");
-            state = 0;
-            counter++;
-            if (counter == 50 || found == "7000") {
-                decision.put("action", "stop");
-            }
-
-        }*/
+    
         String decision = control.decision();
         logger.info("** Decision: {}",decision);
         return decision;

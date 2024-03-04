@@ -19,7 +19,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     State state;
 
     private enum State{
-        findWidth,findLand,moveToIsland,scanIsland, stop
+        findWidth, findLand, moveToIsland, scanIsland, stop
     }
     public IslandAlgorithm(String s){
         JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));
@@ -44,19 +44,19 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 case findLand:{
                     if (distance_to_edge > 1){
                         goForward();
-                        if (drone.getLastScan() == Direction.right(drone.getDirection())) {
-                            useRadar(Direction.left(drone.myDir)); //alternate right and left.
+                        if (drone.getLastScan() == drone.getDirection().right()) {
+                            useRadar(drone.getDirection().left()); //alternate right and left.
                         }
-                        else useRadar(Direction.right(drone.getDirection()));
+                        else useRadar(drone.getDirection().right());
                         distance_to_edge--;
                     }
                     else {
                         if (distance_from_last_scan==0 &&
-                                (drone.getLastScan() == Direction.right(drone.getDirection()))){ // if near a wall and cant turn in direction
-                            goDirection(Direction.left(drone.getDirection())); //go other way
+                                (drone.getLastScan() == drone.getDirection().right())){ // if near a wall and cant turn in direction
+                            goDirection(drone.getDirection().left()); //go other way
                         }
                         else{
-                            goDirection(Direction.right(drone.getDirection()));
+                            goDirection(drone.getDirection().right());
                         }
                     }
 
@@ -120,17 +120,17 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             goForward();
         }
         else{
-            decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""+ Direction.toString( direction ) +"\" } }");
+            decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""+ direction.toString() +"\" } }");
             drone.turnRight();
         }
 
     }
     private void goRight(){
-        decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""+ Direction.toString( Direction.right(drone.getDirection()) ) +"\" } }");
+        decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""+ drone.getDirection().right().toString() +"\" } }");
         drone.turnRight();
     }
     private void goLeft(){
-        decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""+ Direction.toString( Direction.left(drone.getDirection()) ) +"\" } }");
+        decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""+ drone.getDirection().left().toString() +"\" } }");
         drone.turnLeft();
     }
     private void goForward(){
@@ -138,7 +138,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         drone.goForward();
     }
     private void useRadar(Direction d){
-        decisions.add("{ \"action\": \"echo\", \"parameters\": { \"direction\": \"" + Direction.toString(d) + "\" } }");
+        decisions.add("{ \"action\": \"echo\", \"parameters\": { \"direction\": \"" + d.toString() + "\" } }");
         drone.setLastScan(d);
     }
     private void scan(){

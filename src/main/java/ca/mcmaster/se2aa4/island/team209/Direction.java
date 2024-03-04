@@ -5,8 +5,8 @@ public enum Direction {
     E,
     S,
     W;
-    public static String toString(Direction d){
-        switch (d){
+    public String toString(){
+        switch (this){
             case N: return "N";
             case S: return "S";
             case W: return "W";
@@ -14,16 +14,16 @@ public enum Direction {
         }
 
     }
-    public static Direction right(Direction d){
-        switch (d){
+    public Direction right(){
+        switch (this){
             case E: return S;
             case S: return W;
             case W: return N;
             default: return E;
         }
     }
-    public static Direction left(Direction d){
-        switch (d){
+    public Direction left(){
+        switch (this){
             case E: return N;
             case N: return W;
             case W: return S;
