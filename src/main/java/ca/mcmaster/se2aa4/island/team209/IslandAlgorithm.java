@@ -113,9 +113,13 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         if (direction == drone.getDirection())  {
             goForward();
         }
-        else{
+        else if (direction == drone.getDirection().right() ){
             decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""+ direction.toString() +"\" } }");
             drone.turnRight();
+        }
+        else if (direction == drone.getDirection().left() ){
+            decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""+ direction.toString() +"\" } }");
+            drone.turnLeft();
         }
 
     }
