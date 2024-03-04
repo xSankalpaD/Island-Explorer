@@ -75,16 +75,10 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 break;
                 case scanIsland:{
                     scan();
-                    goForward();
-                    scan();
-                    goForward();
-                    scan();
-                    goForward();
-                    scan();
-                    goForward();
-                    decisions.add("");
-
+                    state = State.stop;
                 }
+                break;
+                case stop: decisions.add("{ \"action\": \"stop\" }");
                 break;
                 default: return"";
             }
