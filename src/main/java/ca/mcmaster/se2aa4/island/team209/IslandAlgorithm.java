@@ -12,14 +12,18 @@ import java.util.Queue;
 
 public class IslandAlgorithm implements ExploreAlgorithm {
     String nearestCreek;
-    int distance_from_last_scan, distance_to_edge,distance_to_land;
+    int distance_to_edge,distance_to_land;
     Queue<String> decisions = new ArrayDeque<>();
     ExploringDrone drone;
     JSONObject data;
     State state;
+    Point creek_location;
+    Direction scan_direction;
+    Point scan_start_location;
+
 
     private enum State{
-        findWidth, findLand, moveToIsland, scanIsland, stop
+        findWidth, findLand, moveToIsland, scanStrip,preTurn,turn,checkTurn, turnToOther, stop
     }
     public IslandAlgorithm(String s){
         JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));
@@ -30,57 +34,85 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             case "S" -> Direction.S;
             default -> Direction.E;
         };
-        distance_from_last_scan = 0;
         drone = new ExploringDrone(0,0,info.getInt("budget"), direction,0);
         data = new JSONObject();
         state = State.findWidth;
+        creek_location = new Point(Integer.MAX_VALUE,Integer.MAX_VALUE);
     }
     @Override
     public String decision() {
+        if (drone.battery<30) stop();
         if (decisions.isEmpty()){//
-            switch(state){
-                case findWidth: useRadar(drone.getDirection());
-                break;
-                case findLand:{
-                    if (distance_to_edge > 1){
+            switch (state) {
+                case findWidth -> useRadar(drone.getDirection());
+                case findLand -> {
+                    if (distance_to_edge > 1) {
                         goForward();
                         if (drone.getLastScan() == drone.getDirection().right()) {
                             useRadar(drone.getDirection().left()); //alternate right and left.
-                        }
-                        else useRadar(drone.getDirection().right());
+                        } else useRadar(drone.getDirection().right());
                         distance_to_edge--;
-                    }
-                    else {
-                        if (distance_from_last_scan==0 &&
-                                (drone.getLastScan() == drone.getDirection().right())){ // if near a wall and cant turn in direction
+                    } else {
+                        if (data.getInt("range") == 0 &&
+                                (drone.getLastScan() == drone.getDirection().right())) { // if near a wall and cant turn in direction
                             goDirection(drone.getDirection().left()); //go other way
-                        }
-                        else{
+                        } else {
                             goDirection(drone.getDirection().right());
                         }
                     }
-
                 }
-                break;
-                case moveToIsland:{
-                    if (distance_to_land != 0){
+                case moveToIsland -> {
+                    if (distance_to_land != 1) {
                         goDirection(drone.getLastScan());
                         distance_to_land--;
-                    }
-                    else {
+                    } else {
                         scan();
-                        state = State.scanIsland;
+                        scan_start_location = drone.coords;
+                        state = State.scanStrip;
+                        scan_direction = drone.getDirection().left();
                     }
                 }
-                break;
-                case scanIsland:{
+                case scanStrip -> {
+                    goForward();
                     scan();
-                    state = State.stop;
+                    useRadar(drone.getDirection());
+
                 }
-                break;
-                case stop: decisions.add("{ \"action\": \"stop\" }");
-                break;
-                default: return"";
+                case turn -> {
+                    if (drone.getDirection().right() == scan_direction) {
+                        goRight();
+                        goRight();
+                    } else if (drone.getDirection().left() == scan_direction) {
+                        goLeft();
+                        goLeft();
+                    }
+                    state = State.checkTurn;
+                    useRadar(drone.getDirection());
+                }
+                case preTurn -> {
+                    goForward();
+                    useRadar(scan_direction);
+
+                }
+                case turnToOther -> {
+                    if (drone.getDirection().right() == scan_direction) {
+                        goLeft();
+                        goForward();
+                        goLeft();
+                        goLeft();
+                        goLeft();
+                    } else if (drone.getDirection().left() == scan_direction) {
+                        goRight();
+                        goForward();
+                        goRight();
+                        goRight();
+                        goRight();
+                    }
+                    scan_direction =scan_direction.right().right();
+                    useRadar(drone.getDirection());
+                }
+                case stop -> stop();
+                default -> stop();
             }
         }
         return decisions.remove();
@@ -91,18 +123,80 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         JSONObject mixed_info = new JSONObject(new JSONTokener(new StringReader(s)));
         drone.battery-=mixed_info.getInt("cost");
         data = mixed_info.getJSONObject("extras");
-        if (data.has("found")){
-            distance_from_last_scan =data.getInt("range");
-            if (data.getString("found").equals("OUT_OF_RANGE")&&state == State.findWidth )  {
-                distance_to_edge = distance_from_last_scan;
-                state = State.findLand;
+        switch (state){
+            case findWidth -> {
+                if (data.has("found")){
+                    if (data.getString("found").equals("OUT_OF_RANGE")){
+                        distance_to_edge = data.getInt("range");
+                        state = State.findLand;
+                    }
+                }
             }
-            else if (data.getString("found").equals("GROUND")){
-                state = State.moveToIsland;
-                distance_to_land = data.getInt("range");
+            case findLand ->{
+                if (data.has("found")){
+                    if (data.getString("found").equals("GROUND")){
+                            state = State.moveToIsland;
+                            distance_to_land = data.getInt("range");
+                    }
+                }
+            }
+            case scanStrip ->{
+                if (data.has("found")) {
+                    if (data.getString("found").equals("OUT_OF_RANGE")){
+                        state = State.preTurn;
+                        useRadar(scan_direction);
+                    }
+                }
+                if (data.has("creeks")){
+                    if (drone.coords.closerToOrigin(creek_location)){
+                        nearestCreek =data.getString("creeks");
+                    }
+                }
+            }
+            case preTurn -> {
+                if (data.has("found")) {
+                    if (data.getString("found").equals("OUT_OF_RANGE")) {
+                        state = State.turn;
+                    }
+                }
+            }
+            case checkTurn -> {
+                if (data.has("found")) {
+                    if (data.getString("found").equals("GROUND")){
+                        state = State.scanStrip;
+                        scan();
+                    }
+                    else {
+                        state= State.turnToOther;
+                    }
+                }
+            }
+            case turnToOther -> {
+                if (data.has("found")) {
+                    if (data.getString("found").equals("GROUND")){
+                        state = State.scanStrip;
+                        scan();
+                    }
+                    else if (data.getString("found").equals("OUT_OF_RANGE")){//ifground is not found
+                        if (drone.getDirection().right() == scan_direction) {
+                            goRight();
+                            goRight();
+                            goLeft();
+                            goRight();
+                            goRight();
+                            goRight();
+                        } else if (drone.getDirection().left() == scan_direction) {
+                            goLeft();
+                            goLeft();
+                            goRight();
+                            goLeft();
+                            goLeft();
+                            goLeft();
+                        }
+                    }
+                }
             }
         }
-
     }
 
     @Override
@@ -141,5 +235,8 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     }
     private void scan(){
         decisions.add("{ \"action\": \"scan\" }");
+    }
+    private void stop(){
+        decisions.add("{ \"action\": \"stop\" }");
     }
 }
