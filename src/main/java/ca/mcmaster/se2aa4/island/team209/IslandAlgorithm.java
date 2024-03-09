@@ -41,6 +41,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     }
     @Override
     public String decision() {
+        if (drone.battery < Math.abs(drone.coords.x)+Math.abs(drone.coords.y)) stop();//if battery is getting low based on distiacne
         if (decisions.isEmpty()){//
             switch (state) {
                 case findWidth -> useRadar(drone.getDirection());
@@ -122,6 +123,11 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         JSONObject mixed_info = new JSONObject(new JSONTokener(new StringReader(s)));
         drone.battery-=mixed_info.getInt("cost");
         data = mixed_info.getJSONObject("extras");
+        if (data.has("creeks")){
+            if (drone.coords.closerToOrigin(creek_location)){
+                nearestCreek = data.getString("creeks");
+            }
+        }
         switch (state){
             case findWidth -> {
                 if (data.has("found")){
@@ -144,11 +150,6 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                     if (data.getString("found").equals("OUT_OF_RANGE")){
                         state = State.preTurn;
                         useRadar(scan_direction);
-                    }
-                }
-                if (data.has("creeks")){
-                    if (drone.coords.closerToOrigin(creek_location)){
-                        nearestCreek =data.getString("creeks");
                     }
                 }
             }
