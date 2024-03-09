@@ -41,7 +41,6 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     }
     @Override
     public String decision() {
-        if (drone.battery<30) stop();
         if (decisions.isEmpty()){//
             switch (state) {
                 case findWidth -> useRadar(drone.getDirection());
