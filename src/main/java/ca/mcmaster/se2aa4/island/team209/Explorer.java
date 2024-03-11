@@ -11,9 +11,6 @@ import org.json.JSONTokener;
 public class Explorer implements IExplorerRaid {
     Direction direction;
     private final Logger logger = LogManager.getLogger();
-    int state = 0;
-    int counter = 0;
-    String found;
     ExploreAlgorithm control;
 
     @Override
