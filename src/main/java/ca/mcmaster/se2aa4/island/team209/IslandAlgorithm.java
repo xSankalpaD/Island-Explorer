@@ -1,6 +1,7 @@
 package ca.mcmaster.se2aa4.island.team209;
 
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -38,6 +39,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         data = new JSONObject();
         state = State.findWidth;
         creek_location = new Point(Integer.MAX_VALUE,Integer.MAX_VALUE);
+        nearestCreek = "None";
     }
     @Override
     public String decision() {
@@ -125,7 +127,10 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         data = mixed_info.getJSONObject("extras");
         if (data.has("creeks")){
             if (drone.coords.closerToOrigin(creek_location)){
-                nearestCreek = data.getString("creeks");
+                JSONArray creeks = data.getJSONArray("creeks");
+                if (!creeks.isEmpty()){
+                    nearestCreek = creeks.getString(0);
+                }
             }
         }
         switch (state){
