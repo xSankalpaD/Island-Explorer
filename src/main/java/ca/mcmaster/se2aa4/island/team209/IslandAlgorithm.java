@@ -1,5 +1,10 @@
 package ca.mcmaster.se2aa4.island.team209;
 
+<<<<<<< HEAD
+=======
+
+import org.json.JSONArray;
+>>>>>>> 5eacbeaa57a207f334bfc70e52d5d99e2dbde605
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -35,7 +40,12 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         drone = new ExploringDrone(0, 0, info.getInt("budget"), direction, 0);
         data = new JSONObject();
         state = State.findWidth;
+<<<<<<< HEAD
         creek_location = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
+=======
+        creek_location = new Point(Integer.MAX_VALUE,Integer.MAX_VALUE);
+        nearestCreek = "None";
+>>>>>>> 5eacbeaa57a207f334bfc70e52d5d99e2dbde605
     }
 
     @Override
@@ -75,9 +85,18 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         JSONObject mixed_info = new JSONObject(new JSONTokener(new StringReader(s)));
         drone.battery -= mixed_info.getInt("cost");
         data = mixed_info.getJSONObject("extras");
+<<<<<<< HEAD
         if (data.has("creeks")) {
             if (drone.coords.closerToOrigin(creek_location)) {
                 nearestCreek = data.getString("creeks");
+=======
+        if (data.has("creeks")){
+            if (drone.coords.closerToOrigin(creek_location)){
+                JSONArray creeks = data.getJSONArray("creeks");
+                if (!creeks.isEmpty()){
+                    nearestCreek = creeks.getString(0);
+                }
+>>>>>>> 5eacbeaa57a207f334bfc70e52d5d99e2dbde605
             }
         }
         switch (state) {
