@@ -41,7 +41,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     @Override
     public String decision() {
         if (drone.battery < Math.abs(drone.coords.x) + Math.abs(drone.coords.y))
-            stop();// if battery is getting low based on distiacne
+            return "{ \"action\": \"stop\" }";// if battery is getting low based on distiacne
         if (decisions.isEmpty()) {//
             switch (state) {
                 case findWidth -> useRadar(drone.getDirection());
@@ -86,6 +86,9 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                     if (data.getString("found").equals("OUT_OF_RANGE")) {
                         distance_to_edge = data.getInt("range");
                         state = State.findLand;
+                    } else if (data.getString("found").equals("GROUND")) {
+                        state = State.moveToIsland;
+                        distance_to_land = data.getInt("range");
                     }
                 }
             }
