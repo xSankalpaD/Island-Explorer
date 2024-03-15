@@ -18,6 +18,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     Point creek_location;
     Direction scan_direction;
     Point scan_start_location;
+    Movement mover = new JSONMover(decisions,drone);
 
     private enum State {
         findWidth, findLand, moveToIsland, scanStrip, preTurn, turn, checkTurn, turnToOther, stop
@@ -44,7 +45,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             return "{ \"action\": \"stop\" }";// if battery is getting low based on distiacne
         if (decisions.isEmpty()) {//
             switch (state) {
-                case findWidth -> useRadar(drone.getDirection());
+                case findWidth -> mover.useRadar(drone.getDirection());
                 case findLand -> {
                     decision_findLand();
                 }
@@ -63,8 +64,8 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 case turnToOther -> {
                     decision_turnToOther();
                 }
-                case stop -> stop();
-                default -> stop();
+                case stop -> mover.stop();
+                default -> mover.stop();
             }
         }
         return decisions.remove();
@@ -104,7 +105,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 if (data.has("found")) {
                     if (data.getString("found").equals("OUT_OF_RANGE")) {
                         state = State.preTurn;
-                        useRadar(scan_direction);
+                        mover.useRadar(scan_direction);
                     }
                 }
             }
@@ -119,7 +120,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 if (data.has("found")) {
                     if (data.getString("found").equals("GROUND")) {
                         state = State.scanStrip;
-                        scan();
+                        mover.scan();
                     } else {
                         state = State.turnToOther;
                     }
@@ -129,25 +130,34 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 if (data.has("found")) {
                     if (data.getString("found").equals("GROUND")) {
                         state = State.scanStrip;
-                        scan();
+                        mover.scan();
                     } else if (data.getString("found").equals("OUT_OF_RANGE")) {// ifground is not found
                         if (drone.getDirection().right() == scan_direction) {
-                            goRight();
-                            goRight();
-                            goLeft();
-                            goRight();
-                            goRight();
-                            goRight();
+                            mover.goRight();
+                            mover.goRight();
+                            mover.goLeft();
+                            mover.goRight();
+                            mover.goRight();
+                            mover.goRight();
                         } else if (drone.getDirection().left() == scan_direction) {
-                            goLeft();
-                            goLeft();
-                            goRight();
-                            goLeft();
-                            goLeft();
-                            goLeft();
+                            mover.goLeft();
+                            mover.goLeft();
+                            mover.goRight();
+                            mover.goLeft();
+                            mover.goLeft();
+                            mover.goLeft();
                         }
-                    }
+                   }
                 }
+            }
+            case moveToIsland -> {
+                return;
+            }
+            case turn -> {
+                return;
+            }
+            case stop -> {
+                return;
             }
         }
     }
@@ -159,7 +169,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
 
     private void goDirection(Direction direction) {
         if (direction == drone.getDirection()) {
-            goForward();
+            mover.goForward();
         } else if (direction == drone.getDirection().right()) {
             decisions.add(
                     "{ \"action\": \"heading\", \"parameters\": { \"direction\": \"" + direction.toString() + "\" } }");
@@ -171,7 +181,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         }
 
     }
-
+/* 
     private void goRight() {
         decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""
                 + drone.getDirection().right().toString() + "\" } }");
@@ -201,14 +211,14 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     private void stop() {
         decisions.add("{ \"action\": \"stop\" }");
     }
-
+*/
     private void decision_findLand() {
         if (distance_to_edge > 1) {
-            goForward();
+            mover.goForward();
             if (drone.getLastScan() == drone.getDirection().right()) {
-                useRadar(drone.getDirection().left()); // alternate right and left.
+                mover.useRadar(drone.getDirection().left()); // alternate right and left.
             } else
-                useRadar(drone.getDirection().right());
+                mover.useRadar(drone.getDirection().right());
             distance_to_edge--;
         } else {
             if (data.getInt("range") == 0 &&
@@ -226,7 +236,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             goDirection(drone.getLastScan());
             distance_to_land--;
         } else {
-            scan();
+            mover.scan();
             scan_start_location = drone.coords;
             state = State.scanStrip;
             scan_direction = drone.getDirection().left();
@@ -234,43 +244,43 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     }
 
     private void decision_scanStrip() {
-        goForward();
-        scan();
-        useRadar(drone.getDirection());
+        mover.goForward();
+        mover.scan();
+        mover.useRadar(drone.getDirection());
     }
 
     private void decision_turn() {
         if (drone.getDirection().right() == scan_direction) {
-            goRight();
-            goRight();
+            mover.goRight();
+            mover.goRight();
         } else if (drone.getDirection().left() == scan_direction) {
-            goLeft();
-            goLeft();
+            mover.goLeft();
+            mover.goLeft();
         }
         state = State.checkTurn;
-        useRadar(drone.getDirection());
+        mover.useRadar(drone.getDirection());
     }
 
     private void decision_preTurn() {
-        goForward();
-        useRadar(scan_direction);
+        mover.goForward();
+        mover.useRadar(scan_direction);
     }
 
     private void decision_turnToOther() {
         if (drone.getDirection().right() == scan_direction) {
-            goLeft();
-            goForward();
-            goLeft();
-            goLeft();
-            goLeft();
+            mover.goLeft();
+            mover.goForward();
+            mover.goLeft();
+            mover.goLeft();
+            mover.goLeft();
         } else if (drone.getDirection().left() == scan_direction) {
-            goRight();
-            goForward();
-            goRight();
-            goRight();
-            goRight();
+            mover.goRight();
+            mover.goForward();
+            mover.goRight();
+            mover.goRight();
+            mover.goRight();
         }
         scan_direction = scan_direction.right().right();
-        useRadar(drone.getDirection());
+        mover.useRadar(drone.getDirection());
     }
 }

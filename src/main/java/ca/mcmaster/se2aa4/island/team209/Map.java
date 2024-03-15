@@ -1,6 +1,5 @@
 package ca.mcmaster.se2aa4.island.team209;
 
-import eu.ace_design.island.game.PointOfInterest;
 import java.util.*;
 
 public class Map {
