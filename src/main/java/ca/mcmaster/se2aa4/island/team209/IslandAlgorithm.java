@@ -18,7 +18,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     Point creek_location;
     Direction scan_direction;
     Point scan_start_location;
-    Movement mover = new JSONMover(decisions,drone);
+    Movement mover;
 
     private enum State {
         findWidth, findLand, moveToIsland, scanStrip, preTurn, turn, checkTurn, turnToOther, stop
@@ -37,6 +37,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         data = new JSONObject();
         state = State.findWidth;
         creek_location = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        mover = new JSONMover(decisions,drone);
     }
 
     @Override
