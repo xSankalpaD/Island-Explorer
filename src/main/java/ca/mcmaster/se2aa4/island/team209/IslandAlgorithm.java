@@ -81,7 +81,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         JSONObject mixed_info = new JSONObject(new JSONTokener(new StringReader(s)));
         drone.battery -= mixed_info.getInt("cost");
         data = mixed_info.getJSONObject("extras");
-        if (data.has("creeks")) {
+        if (data.has("creeks")) { //check for creeks
             JSONArray creek_array = data.getJSONArray("creeks");
             if (!creek_array.isEmpty()){
                 String creek_name = creek_array.getString(0);
@@ -93,7 +93,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             }
 
         }
-        if (data.has("sites")) {
+        if (data.has("sites")) {//check for sites
             JSONArray site_array = data.getJSONArray("sites");
             if (!site_array.isEmpty()){
                 site = site_array.getString(0);
