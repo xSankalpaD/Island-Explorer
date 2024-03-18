@@ -1,24 +1,27 @@
 package ca.mcmaster.se2aa4.island.team209;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.StringReader;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Queue;
 
 public class IslandAlgorithm implements ExploreAlgorithm {
-    String nearestCreek;
+    POI nearestCreek;
+    ArrayList<POI> creeks;
     int distance_to_edge, distance_to_land;
     Queue<String> decisions = new ArrayDeque<>();
     ExploringDrone drone;
     JSONObject data;
     State state;
-    Point creek_location;
     Direction scan_direction;
     Point scan_start_location;
     Movement mover;
+    String site ="";
 
     private enum State {
         findWidth, findLand, moveToIsland, scanStrip, preTurn, turn, checkTurn, turnToOther, stop
@@ -36,14 +39,15 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         drone = new ExploringDrone(0, 0, info.getInt("budget"), direction, 0);
         data = new JSONObject();
         state = State.findWidth;
-        creek_location = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        nearestCreek = new POI("", new Point(Integer.MAX_VALUE,Integer.MAX_VALUE));
         mover = new JSONMover(decisions,drone);
+        creeks = new ArrayList<>();
     }
 
     @Override
     public String decision() {
         if (drone.battery < Math.abs(drone.coords.x) + Math.abs(drone.coords.y))
-            return "{ \"action\": \"stop\" }";// if battery is getting low based on distiacne
+            return "{ \"action\": \"stop\" }";// if battery is getting low based on distance
         if (decisions.isEmpty()) {//
             switch (state) {
                 case findWidth -> mover.useRadar(drone.getDirection());
@@ -78,9 +82,29 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         drone.battery -= mixed_info.getInt("cost");
         data = mixed_info.getJSONObject("extras");
         if (data.has("creeks")) {
-            if (drone.coords.closerToOrigin(creek_location)) {
-                nearestCreek = data.getString("creeks");
+            JSONArray creek_array = data.getJSONArray("creeks");
+            if (!creek_array.isEmpty()){
+                String creek_name = creek_array.getString(0);
+                POI found_creek = new POI(creek_name, drone.coords);
+                if (found_creek.location.closerToOrigin(nearestCreek.location)) {
+                    nearestCreek = found_creek;
+                }
+                creeks.add(found_creek);
             }
+
+        }
+        if (data.has("sites")) {
+            JSONArray site_array = data.getJSONArray("sites");
+            if (!site_array.isEmpty()){
+                site = site_array.getString(0);
+                        drone.coords = new Point(0,0); //This is bad code
+                for (POI creek: creeks){
+                    if (creek.location.closerToOrigin(nearestCreek.location)) {
+                        nearestCreek = creek;
+                    }
+                }
+            }
+
         }
         switch (state) {
             case findWidth -> {
@@ -112,7 +136,8 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             }
             case preTurn -> {
                 if (data.has("found")) {
-                    if (data.getString("found").equals("OUT_OF_RANGE")) {
+                    if (data.getString("found").equals("OUT_OF_RANGE")||
+                            data.getString("found").equals("GROUND") && data.getInt("range") > 2) {
                         state = State.turn;
                     }
                 }
@@ -132,7 +157,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                     if (data.getString("found").equals("GROUND")) {
                         state = State.scanStrip;
                         mover.scan();
-                    } else if (data.getString("found").equals("OUT_OF_RANGE")) {// ifground is not found
+                    } else if (data.getString("found").equals("OUT_OF_RANGE")) {// if ground is not found
                         if (drone.getDirection().right() == scan_direction) {
                             mover.goRight();
                             mover.goRight();
@@ -151,10 +176,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                    }
                 }
             }
-            case moveToIsland -> {
-                return;
-            }
-            case turn -> {
+            case moveToIsland, turn -> {
                 return;
             }
             case stop -> {
@@ -165,7 +187,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
 
     @Override
     public String finalReport() {
-        return nearestCreek;
+        return nearestCreek.name;
     }
 
     private void goDirection(Direction direction) {

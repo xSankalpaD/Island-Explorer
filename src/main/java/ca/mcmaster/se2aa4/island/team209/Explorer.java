@@ -51,7 +51,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String deliverFinalReport() {
-        logger.info("Closest Creek: {}", control.finalReport());
+        logger.info(control.finalReport());
         return control.finalReport();
     }
 
