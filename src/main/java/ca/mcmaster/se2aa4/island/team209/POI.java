@@ -7,4 +7,13 @@ public class POI {
         name = the_name;
         location = the_location;
     }
+    public POI closerPoint(POI a,POI b){
+        long a_dist,b_dist;
+        a_dist = (a.location.x-this.location.x)^2 + (a.location.y-this.location.y)^2;
+        b_dist= (b.location.x-this.location.y)^2 + (b.location.y-this.location.y)^2;
+        if (a_dist < b_dist){
+            return a;
+        }
+        return b;
+    }
 }
