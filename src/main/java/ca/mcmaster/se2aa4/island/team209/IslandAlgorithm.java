@@ -7,21 +7,19 @@ import org.json.JSONTokener;
 import java.io.StringReader;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Queue;
 
 public class IslandAlgorithm implements ExploreAlgorithm {
-    POI nearestCreek;
-    ArrayList<POI> creeks;
     int distance_to_edge, distance_to_land;
     Queue<String> decisions = new ArrayDeque<>();
+    POIHandler poiHandler;
     ExploringDrone drone;
     JSONObject data;
     State state;
     Direction scan_direction;
     Point scan_start_location;
     Movement mover;
-    POI site;
+
 
     private enum State {
         findWidth, findLand, moveToIsland, scanStrip, preTurn, turn, checkTurn, turnToOther, stop
@@ -40,10 +38,8 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         drone = new ExploringDrone(1, 1, info.getInt("budget"), direction);
         data = new JSONObject();
         state = State.findWidth;
-        nearestCreek = new POI("", new Point(Integer.MAX_VALUE/2,Integer.MAX_VALUE/2));
         mover = new JSONMover(decisions,drone);
-        creeks = new ArrayList<>();
-        site = new POI("",new Point(0,0));
+        poiHandler = new NearestCreekToSitePOIHandler();
     }
 
     @Override
@@ -83,23 +79,21 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         JSONObject mixed_info = new JSONObject(new JSONTokener(new StringReader(s)));
         drone.battery -= mixed_info.getInt("cost");
         data = mixed_info.getJSONObject("extras");
+
         if (data.has("creeks")) { //check for creeks
             JSONArray creek_array = data.getJSONArray("creeks");
             if (!creek_array.isEmpty()){
                 String creek_name = creek_array.getString(0);
                 POI found_creek = new POI(creek_name, drone.staticPoint());
-                nearestCreek = site.closerPoint(found_creek,nearestCreek);
-                creeks.add(found_creek);
+                poiHandler.addPoint("creek", found_creek);
             }
-
         }
+
         if (data.has("sites")) {//check for sites
             JSONArray site_array = data.getJSONArray("sites");
             if (!site_array.isEmpty()){
-                site = new POI(site_array.getString(0),drone.staticPoint());
-                for (POI creek: creeks){
-                    nearestCreek = site.closerPoint(creek,nearestCreek);
-                }
+                POI site = new POI(site_array.getString(0),drone.staticPoint());
+                poiHandler.addPoint("site",site);
             }
 
         }
@@ -184,7 +178,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
 
     @Override
     public String finalReport() {
-        return nearestCreek.name;
+        return poiHandler.getReport();
     }
 
     private void goDirection(Direction direction) {
