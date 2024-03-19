@@ -2,12 +2,10 @@ package ca.mcmaster.se2aa4.island.team209;
 
 public class ExploringDrone extends Drone {
 
-    public int batteryUsagePerTurn;
     private Direction lastScan;
 
-    public ExploringDrone(int x, int y, int Battery, Direction dir, int bUsage){
+    public ExploringDrone(int x, int y, int Battery, Direction dir){
         super(x, y, Battery, dir);
-        this.batteryUsagePerTurn = bUsage;   
     }
     public void turnRight() {
         switch (myDir) {
@@ -86,5 +84,8 @@ public class ExploringDrone extends Drone {
     }
     public void setLastScan(Direction d){
         lastScan = d;
+    }
+    public Point staticPoint(){//deep copy
+        return new Point(coords.x,coords.y);
     }
 }

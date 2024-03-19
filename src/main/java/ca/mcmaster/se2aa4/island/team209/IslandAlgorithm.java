@@ -36,7 +36,8 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             case "S" -> Direction.S;
             default -> Direction.E;
         };
-        drone = new ExploringDrone(0, 0, info.getInt("budget"), direction, 0);
+        //drone = new ExploringDrone(info.getInt("x"), info.getInt("y"), info.getInt("budget"), direction);
+        drone = new ExploringDrone(1, 1, info.getInt("budget"), direction);
         data = new JSONObject();
         state = State.findWidth;
         nearestCreek = new POI("", new Point(Integer.MAX_VALUE/2,Integer.MAX_VALUE/2));
@@ -86,7 +87,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             JSONArray creek_array = data.getJSONArray("creeks");
             if (!creek_array.isEmpty()){
                 String creek_name = creek_array.getString(0);
-                POI found_creek = new POI(creek_name, drone.coords.staticPoint());
+                POI found_creek = new POI(creek_name, drone.staticPoint());
                 nearestCreek = site.closerPoint(found_creek,nearestCreek);
                 creeks.add(found_creek);
             }
@@ -95,7 +96,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         if (data.has("sites")) {//check for sites
             JSONArray site_array = data.getJSONArray("sites");
             if (!site_array.isEmpty()){
-                site = new POI(site_array.getString(0),drone.coords.staticPoint());
+                site = new POI(site_array.getString(0),drone.staticPoint());
                 for (POI creek: creeks){
                     nearestCreek = site.closerPoint(creek,nearestCreek);
                 }
