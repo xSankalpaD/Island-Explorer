@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.StringReader;
+
 public class IslandAlgorithm implements ExploreAlgorithm {
     private int distance_to_edge, distance_to_land;
     private final POIHandler poiHandler;
@@ -14,6 +15,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     private Direction scan_direction;
     private Point scan_start_location;
     private final Movement mover;
+
     private enum State {
         findWidth, findLand, moveToIsland, scanStrip, preTurn, turn, checkTurn, turnToOther, stop
     }
@@ -27,7 +29,8 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             case "S" -> Direction.S;
             default -> Direction.E;
         };
-        //drone = new ExploringDrone(info.getInt("x"), info.getInt("y"), info.getInt("budget"), direction);
+        // drone = new ExploringDrone(info.getInt("x"), info.getInt("y"),
+        // info.getInt("budget"), direction);
         drone = new ExploringDrone(1, 1, info.getInt("budget"), direction);
         data = new JSONObject();
         state = State.findWidth;
@@ -65,130 +68,9 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 default -> mover.stop();
             }
         }
-        if (mover.needsInstruction())//if something has gone and the drone does not have valid instructions
+        if (mover.needsInstruction())// if something has gone and the drone does not have valid instructions
             mover.stop();
         return mover.getNextInstruction();
-    }
-
-    @Override
-    public void takeInfo(String s) {
-        JSONObject mixed_info = new JSONObject(new JSONTokener(new StringReader(s)));
-        drone.battery -= mixed_info.getInt("cost");
-        data = mixed_info.getJSONObject("extras");
-        if (scan_start_location.equals(drone.coords)){//if whole island is scanned will arrive at same location.
-            state = State.stop;
-        }
-        if (data.has("creeks")) { //check for creeks
-            JSONArray creek_array = data.getJSONArray("creeks");
-            if (!creek_array.isEmpty()){
-                String creek_name = creek_array.getString(0);
-                POI found_creek = new POI(creek_name, drone.staticPoint());
-                poiHandler.addPoint("creek", found_creek);
-            }
-        }
-
-        if (data.has("sites")) {//check for sites
-            JSONArray site_array = data.getJSONArray("sites");
-            if (!site_array.isEmpty()){
-                POI site = new POI(site_array.getString(0),drone.staticPoint());
-                poiHandler.addPoint("site",site);
-            }
-
-        }
-        switch (state) {
-            case findWidth -> {
-                if (data.has("found")) {
-                    if (data.getString("found").equals("OUT_OF_RANGE")) {
-                        distance_to_edge = data.getInt("range");
-                        state = State.findLand;
-                    } else if (data.getString("found").equals("GROUND")) {
-                        state = State.moveToIsland;
-                        distance_to_land = data.getInt("range");
-                    }
-                }
-            }
-            case findLand -> {
-                if (data.has("found")) {
-                    if (data.getString("found").equals("GROUND")) {
-                        state = State.moveToIsland;
-                        distance_to_land = data.getInt("range");
-                    }
-                }
-            }
-            case scanStrip -> {
-                if (data.has("biomes")){
-                    JSONArray biomeType = data.getJSONArray("biomes");
-                    if (biomeType.length()==1 && biomeType.getString(0).equals("OCEAN")){
-                        mover.useRadar(drone.getDirection());
-                    }
-                }
-                else if (data.has("found")) {
-                    if (data.getString("found").equals("OUT_OF_RANGE")) {
-                        state = State.preTurn;
-                        mover.useRadar(scan_direction);
-                    }
-                }
-            }
-            case preTurn -> {
-                if (data.has("found")) {
-                    if (data.getString("found").equals("OUT_OF_RANGE")||
-                            data.getString("found").equals("GROUND") && data.getInt("range") > 2) {
-                        state = State.turn;
-                    }
-                }
-            }
-            case checkTurn -> {
-                if (data.has("found")) {
-                    if (data.getString("found").equals("GROUND")) {
-                        // Changed to add step in before scanstrip
-                        state = State.scanStrip;
-                        mover.scan();
-                    } else {
-                        state = State.turnToOther;
-                    }
-                }
-            }
-            case turnToOther -> {
-                if (data.has("found")) {
-                    if (data.getString("found").equals("GROUND")) {
-                        state = State.scanStrip;
-                        mover.scan();
-                    }
-                    if (data.getString("found").equals("OUT_OF_RANGE")) {
-                        state = State.preTurn;
-                    }
-                }
-            }
-            case moveToIsland, turn -> {
-                return;
-            }
-            case stop -> {
-                return;
-            }
-        }
-    }
-
-    @Override
-    public String finalReport() {
-        return poiHandler.getReport();
-    }
-    private void decision_findLand() {
-        if (distance_to_edge > 1) {
-            mover.goForward();
-            if (drone.getLastScan() == drone.getDirection().right()) {
-                mover.useRadar(drone.getDirection().left()); // alternate right and left.
-            } else
-                mover.useRadar(drone.getDirection().right());
-            distance_to_edge--;
-        } else {
-            if (data.getInt("range") == 0 &&
-                    (drone.getLastScan() == drone.getDirection().right())) { // if near a wall and cant turn in
-                                                                             // direction
-                mover.goDirection(drone.getDirection().left()); // go other way
-            } else {
-                mover.goDirection(drone.getDirection().right());
-            }
-        }
     }
 
     private void decision_moveToIsland() {
@@ -244,4 +126,126 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         scan_direction = scan_direction.right().right();
         mover.useRadar(drone.getDirection());
     }
+
+    @Override
+    public void takeInfo(String s) {
+        JSONObject mixed_info = new JSONObject(new JSONTokener(new StringReader(s)));
+        drone.battery -= mixed_info.getInt("cost");
+        data = mixed_info.getJSONObject("extras");
+        if (scan_start_location.equals(drone.coords)) {// if whole island is scanned will arrive at same location.
+            state = State.stop;
+        }
+        if (data.has("creeks")) { // check for creeks
+            JSONArray creek_array = data.getJSONArray("creeks");
+            if (!creek_array.isEmpty()) {
+                String creek_name = creek_array.getString(0);
+                POI found_creek = new POI(creek_name, drone.staticPoint());
+                poiHandler.addPoint("creek", found_creek);
+            }
+        }
+
+        if (data.has("sites")) {// check for sites
+            JSONArray site_array = data.getJSONArray("sites");
+            if (!site_array.isEmpty()) {
+                POI site = new POI(site_array.getString(0), drone.staticPoint());
+                poiHandler.addPoint("site", site);
+            }
+
+        }
+        switch (state) {
+            case findWidth -> {
+                if (data.has("found")) {
+                    if (data.getString("found").equals("OUT_OF_RANGE")) {
+                        distance_to_edge = data.getInt("range");
+                        state = State.findLand;
+                    } else if (data.getString("found").equals("GROUND")) {
+                        state = State.moveToIsland;
+                        distance_to_land = data.getInt("range");
+                    }
+                }
+            }
+            case findLand -> {
+                if (data.has("found")) {
+                    if (data.getString("found").equals("GROUND")) {
+                        state = State.moveToIsland;
+                        distance_to_land = data.getInt("range");
+                    }
+                }
+            }
+            case scanStrip -> {
+                if (data.has("biomes")) {
+                    JSONArray biomeType = data.getJSONArray("biomes");
+                    if (biomeType.length() == 1 && biomeType.getString(0).equals("OCEAN")) {
+                        mover.useRadar(drone.getDirection());
+                    }
+                } else if (data.has("found")) {
+                    if (data.getString("found").equals("OUT_OF_RANGE")) {
+                        state = State.preTurn;
+                        mover.useRadar(scan_direction);
+                    }
+                }
+            }
+            case preTurn -> {
+                if (data.has("found")) {
+                    if (data.getString("found").equals("OUT_OF_RANGE") ||
+                            data.getString("found").equals("GROUND") && data.getInt("range") > 2) {
+                        state = State.turn;
+                    }
+                }
+            }
+            case checkTurn -> {
+                if (data.has("found")) {
+                    if (data.getString("found").equals("GROUND")) {
+                        // Changed to add step in before scanstrip
+                        state = State.scanStrip;
+                        mover.scan();
+                    } else {
+                        state = State.turnToOther;
+                    }
+                }
+            }
+            case turnToOther -> {
+                if (data.has("found")) {
+                    if (data.getString("found").equals("GROUND")) {
+                        state = State.scanStrip;
+                        mover.scan();
+                    }
+                    if (data.getString("found").equals("OUT_OF_RANGE")) {
+                        state = State.preTurn;
+                    }
+                }
+            }
+            case moveToIsland, turn -> {
+                return;
+            }
+            case stop -> {
+                return;
+            }
+        }
+    }
+
+    @Override
+    public String finalReport() {
+        return poiHandler.getReport();
+    }
+
+    private void decision_findLand() {
+        if (distance_to_edge > 1) {
+            mover.goForward();
+            if (drone.getLastScan() == drone.getDirection().right()) {
+                mover.useRadar(drone.getDirection().left()); // alternate right and left.
+            } else
+                mover.useRadar(drone.getDirection().right());
+            distance_to_edge--;
+        } else {
+            if (data.getInt("range") == 0 &&
+                    (drone.getLastScan() == drone.getDirection().right())) { // if near a wall and cant turn in
+                                                                             // direction
+                mover.goDirection(drone.getDirection().left()); // go other way
+            } else {
+                mover.goDirection(drone.getDirection().right());
+            }
+        }
+    }
+
 }
