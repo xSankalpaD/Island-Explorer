@@ -5,22 +5,15 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.StringReader;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 public class IslandAlgorithm implements ExploreAlgorithm {
-    int distance_to_edge, distance_to_land;
-    Queue<String> decisions = new ArrayDeque<>();
-    POIHandler poiHandler;
-    ExploringDrone drone;
-    JSONObject data;
-    State state;
-    Direction scan_direction;
-    Point scan_start_location;
-    Movement mover;
-
-
+    private int distance_to_edge, distance_to_land;
+    private final POIHandler poiHandler;
+    private final ExploringDrone drone;
+    private JSONObject data;
+    private State state;
+    private Direction scan_direction;
+    private Point scan_start_location;
+    private final Movement mover;
     private enum State {
         findWidth, findLand, moveToIsland, scanStrip, preTurn, turn, checkTurn, turnToOther, stop
     }
@@ -38,7 +31,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         drone = new ExploringDrone(1, 1, info.getInt("budget"), direction);
         data = new JSONObject();
         state = State.findWidth;
-        mover = new JSONMover(decisions,drone);
+        mover = new JSONMover(drone);
         poiHandler = new NearestCreekToSitePOIHandler();
     }
 
@@ -46,7 +39,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     public String decision() {
         if (drone.battery < Math.abs(drone.coords.x) + Math.abs(drone.coords.y))
             return "{ \"action\": \"stop\" }";// if battery is getting low based on distance
-        if (decisions.isEmpty()) {//
+        if (mover.needsInstruction()) {//
             switch (state) {
                 case findWidth -> mover.useRadar(drone.getDirection());
                 case findLand -> {
@@ -71,7 +64,9 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 default -> mover.stop();
             }
         }
-        return decisions.remove();
+        if (mover.needsInstruction())//if something has gone and the drone does not have valid instructions
+            mover.stop();
+        return mover.getNextInstruction();
     }
 
     @Override
@@ -79,7 +74,6 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         JSONObject mixed_info = new JSONObject(new JSONTokener(new StringReader(s)));
         drone.battery -= mixed_info.getInt("cost");
         data = mixed_info.getJSONObject("extras");
-
         if (data.has("creeks")) { //check for creeks
             JSONArray creek_array = data.getJSONArray("creeks");
             if (!creek_array.isEmpty()){
@@ -180,52 +174,6 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     public String finalReport() {
         return poiHandler.getReport();
     }
-
-    private void goDirection(Direction direction) {
-        if (direction == drone.getDirection()) {
-            mover.goForward();
-        } else if (direction == drone.getDirection().right()) {
-            decisions.add(
-                    "{ \"action\": \"heading\", \"parameters\": { \"direction\": \"" + direction.toString() + "\" } }");
-            drone.turnRight();
-        } else if (direction == drone.getDirection().left()) {
-            decisions.add(
-                    "{ \"action\": \"heading\", \"parameters\": { \"direction\": \"" + direction.toString() + "\" } }");
-            drone.turnLeft();
-        }
-
-    }
-/* 
-    private void goRight() {
-        decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""
-                + drone.getDirection().right().toString() + "\" } }");
-        drone.turnRight();
-    }
-
-    private void goLeft() {
-        decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""
-                + drone.getDirection().left().toString() + "\" } }");
-        drone.turnLeft();
-    }
-
-    private void goForward() {
-        decisions.add("{ \"action\": \"fly\" }");
-        drone.goForward();
-    }
-
-    private void useRadar(Direction d) {
-        decisions.add("{ \"action\": \"echo\", \"parameters\": { \"direction\": \"" + d.toString() + "\" } }");
-        drone.setLastScan(d);
-    }
-
-    private void scan() {
-        decisions.add("{ \"action\": \"scan\" }");
-    }
-
-    private void stop() {
-        decisions.add("{ \"action\": \"stop\" }");
-    }
-*/
     private void decision_findLand() {
         if (distance_to_edge > 1) {
             mover.goForward();
@@ -238,16 +186,16 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             if (data.getInt("range") == 0 &&
                     (drone.getLastScan() == drone.getDirection().right())) { // if near a wall and cant turn in
                                                                              // direction
-                goDirection(drone.getDirection().left()); // go other way
+                mover.goDirection(drone.getDirection().left()); // go other way
             } else {
-                goDirection(drone.getDirection().right());
+                mover.goDirection(drone.getDirection().right());
             }
         }
     }
 
     private void decision_moveToIsland() {
         if (distance_to_land != 1) {
-            goDirection(drone.getLastScan());
+            mover.goDirection(drone.getLastScan());
             distance_to_land--;
         } else {
             mover.scan();
