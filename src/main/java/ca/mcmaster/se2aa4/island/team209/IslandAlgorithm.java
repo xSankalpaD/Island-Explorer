@@ -116,7 +116,13 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 }
             }
             case scanStrip -> {
-                if (data.has("found")) {
+                if (data.has("biomes")){
+                    JSONArray biomeType = data.getJSONArray("biomes");
+                    if (biomeType.length()==1 && biomeType.getString(0).equals("OCEAN")){
+                        mover.useRadar(drone.getDirection());
+                    }
+                }
+                else if (data.has("found")) {
                     if (data.getString("found").equals("OUT_OF_RANGE")) {
                         state = State.preTurn;
                         mover.useRadar(scan_direction);
@@ -134,6 +140,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             case checkTurn -> {
                 if (data.has("found")) {
                     if (data.getString("found").equals("GROUND")) {
+                        // Changed to add step in before scanstrip
                         state = State.scanStrip;
                         mover.scan();
                     } else {
@@ -201,7 +208,6 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     private void decision_scanStrip() {
         mover.goForward();
         mover.scan();
-        mover.useRadar(drone.getDirection());
     }
 
     private void decision_turn() {
