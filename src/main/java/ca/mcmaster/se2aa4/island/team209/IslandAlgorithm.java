@@ -45,27 +45,16 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             return "{ \"action\": \"stop\" }";// if battery is getting low based on distance
         if (mover.needsInstruction()) {//
             switch (state) {
+
                 case findWidth -> mover.useRadar(drone.getDirection());
-                case findLand -> {
-                    decision_findLand();
-                }
-                case moveToIsland -> {
-                    decision_moveToIsland();
-                }
-                case scanStrip -> {
-                    decision_scanStrip();
-                }
-                case turn -> {
-                    decision_turn();
-                }
-                case preTurn -> {
-                    decision_preTurn();
-                }
-                case turnToOther -> {
-                    decision_turnToOther();
-                }
+
+                case findLand -> decision_findLand();
+                case moveToIsland -> decision_moveToIsland();
+                case scanStrip -> decision_scanStrip();
+                case turn -> decision_turn();
+                case preTurn -> decision_preTurn();
+                case turnToOther -> decision_turnToOther();
                 case stop -> mover.stop();
-                default -> mover.stop();
             }
         }
         if (mover.needsInstruction()) {//if something has gone and the drone does not have valid instructions
@@ -168,31 +157,10 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                         state = State.scanStrip;
                         mover.scan();
                     } else if (data.getString("found").equals("OUT_OF_RANGE")) {// if ground is not found
-                        /*if (drone.getDirection().right() == scan_direction) {
-                            mover.goRight();
-                            mover.goRight();
-                            mover.goLeft();
-                            mover.goRight();
-                            mover.goRight();
-                            mover.goRight();
-                        } else if (drone.getDirection().left() == scan_direction) {
-                            mover.goLeft();
-                            mover.goLeft();
-                            mover.goRight();
-                            mover.goLeft();
-                            mover.goLeft();
-                            mover.goLeft();
-                        }*/
                         state = State.preTurn;
 
                    }
                 }
-            }
-            case moveToIsland, turn -> {
-                return;
-            }
-            case stop -> {
-                return;
             }
         }
     }
