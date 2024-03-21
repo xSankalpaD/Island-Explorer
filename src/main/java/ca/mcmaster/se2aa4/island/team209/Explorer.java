@@ -9,9 +9,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class Explorer implements IExplorerRaid {
-    Direction direction;
     private final Logger logger = LogManager.getLogger();
-    ExploreAlgorithm control;
+    private ExploreAlgorithm control;
 
     @Override
     public void initialize(String s) {
@@ -20,7 +19,6 @@ public class Explorer implements IExplorerRaid {
         JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));
         logger.info("** Initialization info:\n {}", info.toString(2));
         String direction = info.getString("heading");
-        this.direction = Direction.valueOf(direction);
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
@@ -29,7 +27,6 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
-    
         String decision = control.decision();
         logger.info("** Decision: {}",decision);
         return decision;

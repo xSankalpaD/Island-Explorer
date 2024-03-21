@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NearestCreekToSitePOIHandler implements POIHandler{
-    List<POI> creeks;
-    POI site;
+    private final List<POI> creeks;
+    private POI site;
     public NearestCreekToSitePOIHandler(){
         creeks = new ArrayList<>();
     }
@@ -33,6 +33,6 @@ public class NearestCreekToSitePOIHandler implements POIHandler{
         for (POI creek: creeks ){
             nearestCreek = site.closerPoint(creek,nearestCreek);
         }
-        return nearestCreek.name;
+        return nearestCreek.name+" "+ site.name;
     }
 }

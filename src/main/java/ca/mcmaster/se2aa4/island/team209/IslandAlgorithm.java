@@ -41,7 +41,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
 
     @Override
     public String decision() {
-        if (drone.battery < Math.abs(drone.coords.x) + Math.abs(drone.coords.y))
+        if (drone.getBattery() < Math.abs(drone.getCoordinates().x) + Math.abs(drone.getCoordinates().y))
             return "{ \"action\": \"stop\" }";// if battery is getting low based on distance
         if (mover.needsInstruction()) {//
             switch (state) {
@@ -78,9 +78,9 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     @Override
     public void takeInfo(String s) {
         JSONObject mixed_info = new JSONObject(new JSONTokener(new StringReader(s)));
-        drone.battery -= mixed_info.getInt("cost");
+        drone.loseBattery(mixed_info.getInt("cost"));
         data = mixed_info.getJSONObject("extras");
-        if (scan_start && scan_start_location.equals(drone.coords)) {// if whole island is scanned will arrive at same location.
+        if (scan_start && scan_start_location.equals(drone.getCoordinates())) {// if whole island is scanned will arrive at same location.
             state = State.stop;
         }
         if (data.has("creeks")) { //check for creeks
@@ -199,7 +199,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
 
     @Override
     public String finalReport() {
-        logger.info("Battery: "+drone.battery);
+        logger.info("Battery: "+drone.getBattery());
         return poiHandler.getReport();
     }
     private void decision_findLand() {
