@@ -1,9 +1,10 @@
 package ca.mcmaster.se2aa4.island.team209;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import java.io.StringReader;
 public class IslandAlgorithm implements ExploreAlgorithm {
     private int distance_to_edge, distance_to_land;
@@ -11,6 +12,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     private final ExploringDrone drone;
     private JSONObject data;
     private State state;
+    private final Logger logger = LogManager.getLogger();
     private Direction scan_direction;
     private Point scan_start_location;
     private boolean scan_start;
@@ -66,8 +68,10 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 default -> mover.stop();
             }
         }
-        if (mover.needsInstruction())//if something has gone and the drone does not have valid instructions
+        if (mover.needsInstruction()) {//if something has gone and the drone does not have valid instructions
+            logger.info("no valid instructions, Stopping");
             mover.stop();
+        }
         return mover.getNextInstruction();
     }
 
@@ -76,6 +80,9 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         JSONObject mixed_info = new JSONObject(new JSONTokener(new StringReader(s)));
         drone.battery -= mixed_info.getInt("cost");
         data = mixed_info.getJSONObject("extras");
+        if (scan_start && scan_start_location.equals(drone.coords)) {// if whole island is scanned will arrive at same location.
+            state = State.stop;
+        }
         if (data.has("creeks")) { //check for creeks
             JSONArray creek_array = data.getJSONArray("creeks");
             if (!creek_array.isEmpty()){
@@ -117,8 +124,8 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             }
             case scanStrip -> {
                 if (data.has("biomes")){
-                    JSONArray biomeType = data.getJSONArray("biomes");
-                    if (biomeType.length()==1 && biomeType.getString(0).equals("OCEAN")){
+                    JSONArray biomeArray = data.getJSONArray("biomes");
+                    if (biomeArray.length()==1 && biomeArray.getString(0).equals("OCEAN")){
                         mover.useRadar(drone.getDirection());
                     }
                 }
@@ -147,7 +154,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             case checkTurn -> {
                 if (data.has("found")) {
                     if (data.getString("found").equals("GROUND")) {
-                        // Changed to add step in before scanstrip
+                        // Changed to add step in before scanStrip
                         state = State.scanStrip;
                         mover.scan();
                     } else {
@@ -161,7 +168,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                         state = State.scanStrip;
                         mover.scan();
                     } else if (data.getString("found").equals("OUT_OF_RANGE")) {// if ground is not found
-                        if (drone.getDirection().right() == scan_direction) {
+                        /*if (drone.getDirection().right() == scan_direction) {
                             mover.goRight();
                             mover.goRight();
                             mover.goLeft();
@@ -175,7 +182,9 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                             mover.goLeft();
                             mover.goLeft();
                             mover.goLeft();
-                        }
+                        }*/
+                        state = State.preTurn;
+
                    }
                 }
             }
@@ -190,6 +199,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
 
     @Override
     public String finalReport() {
+        logger.info("Battery: "+drone.battery);
         return poiHandler.getReport();
     }
     private void decision_findLand() {
@@ -216,11 +226,12 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             mover.goDirection(drone.getLastScan());
             distance_to_land--;
         } else {
-            mover.scan();
-            if (!scan_start) { 
-                scan_start_location = drone.coords;
+            if (!scan_start) {
+                scan_start_location = drone.staticPoint();
                 scan_start = true;
+                mover.goDirection(drone.getLastScan());
             }
+            mover.scan();
             state = State.scanStrip;
             //scan_direction = drone.getDirection().left();
         }
