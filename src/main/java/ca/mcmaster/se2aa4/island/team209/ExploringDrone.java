@@ -9,74 +9,63 @@ public class ExploringDrone extends Drone {
     }
     public void turnRight() {
         switch (myDir) {
-            case N:
+            case N -> {
                 myDir = Direction.E;
                 coords.x++;
                 coords.y--;
-                break;
-            case E:
+            }
+            case E -> {
                 myDir = Direction.S;
                 coords.x++;
                 coords.y++;
-                break;
-            case W:
+            }
+            case W -> {
                 myDir = Direction.N;
                 coords.x--;
                 coords.y--;
-                break;
-            case S:
+            }
+            case S -> {
                 myDir = Direction.W;
                 coords.x--;
                 coords.y++;
-                break;
-            default:
-                myDir = Direction.N;
+            }
+            default -> myDir = Direction.N;
         }
     }
 
     public void turnLeft() {
         switch (myDir) {
-            case N:
+            case N -> {
                 myDir = Direction.W;
                 coords.x--;
                 coords.y--;
-                break;
-            case E:
+            }
+            case E -> {
                 myDir = Direction.N;
                 coords.x++;
                 coords.y--;
-                break;
-            case W:
+            }
+            case W -> {
                 myDir = Direction.S;
                 coords.x--;
                 coords.y++;
-                break;
-            case S:
+            }
+            case S -> {
                 myDir = Direction.E;
                 coords.x++;
                 coords.y++;
-                break;
-            default:
-                myDir = Direction.N;
+            }
+            default -> myDir = Direction.N;
         }
     }
 
     public void goForward() {
         switch (myDir) {
-            case N:
-                coords.y--;
-                break;
-            case E:
-                coords.x++;
-                break;
-            case W:
-                coords.x--;
-                break;
-            case S:
-                coords.y++;
-                break;
-            default:
-                myDir = Direction.N;
+            case N -> coords.y--;
+            case E -> coords.x++;
+            case W -> coords.x--;
+            case S -> coords.y++;
+            default -> myDir = Direction.N;
         }
     }
     public Direction getLastScan(){
