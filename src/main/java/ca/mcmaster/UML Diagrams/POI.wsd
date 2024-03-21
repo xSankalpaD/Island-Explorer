@@ -1,0 +1,39 @@
+@startuml
+
+package "ca.mcmaster.se2aa4.island.team209" {
+    interface POIHandler {
+        + addPoint(type: String, poi: POI)
+        + getReport(): String
+    }
+
+    class POI {
+        - location: Point
+        - name: String
+
+        + POI(the_name: String, the_location: Point)
+        + closerPoint(a: POI, b: POI): POI
+    }
+
+    class NearestCreekToSitePOIHandler {
+        - creeks: List<POI>
+        - site: POI
+
+        + NearestCreekToSitePOIHandler()
+        + addPoint(type: String, poi: POI)
+        + getReport(): String
+    }
+
+    class Point {
+        - x: int
+        - y: int
+
+        + Point(x: int, y: int)
+        + equals(ob: Object): boolean
+    }
+
+    POIHandler <|.. NearestCreekToSitePOIHandler
+    POI <-- NearestCreekToSitePOIHandler
+    POI "1" *--> "0..1" Point
+}
+
+@enduml
