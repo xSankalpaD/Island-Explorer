@@ -23,7 +23,7 @@ public class NearestCreekToSitePOIHandler implements POIHandler {
     @Override
     public String getReport() {
         if (creeks.isEmpty()) {
-            return "none";
+            return "no site or creek found";
         }
         if (site == null) {
             return "no site found\n Possible creek:" + creeks.get(0).name;
