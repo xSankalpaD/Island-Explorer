@@ -42,8 +42,6 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             case "S" -> Direction.S;
             default -> Direction.E;
         };
-        // drone = new ExploringDrone(info.getInt("x"), info.getInt("y"),
-        // info.getInt("budget"), direction);
         drone = new ExploringDrone(1, 1, info.getInt("budget"), direction);
         data = new JSONObject();
         state = State.findWidth;
@@ -90,7 +88,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             JSONArray creek_array = data.getJSONArray("creeks");
             if (!creek_array.isEmpty()) {
                 String creek_name = creek_array.getString(0);
-                POI found_creek = new POI(creek_name, drone.staticPoint());
+                POI found_creek = new POI(creek_name, drone.getCoordinates());
                 poiHandler.addPoint("creek", found_creek);
             }
         }
@@ -98,7 +96,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         if (data.has("sites")) {// check for sites
             JSONArray site_array = data.getJSONArray("sites");
             if (!site_array.isEmpty()) {
-                POI site = new POI(site_array.getString(0), drone.staticPoint());
+                POI site = new POI(site_array.getString(0), drone.getCoordinates());
                 poiHandler.addPoint("site", site);
             }
 
@@ -208,7 +206,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             distance_to_land--;
         } else {
             if (!scan_start) {
-                scan_start_location = drone.staticPoint();
+                scan_start_location = drone.getCoordinates();
                 scan_start = true;
                 mover.goDirection(drone.getLastScan());
             }

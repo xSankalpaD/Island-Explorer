@@ -14,23 +14,23 @@ public class ExploringDroneTest {
     }
     @Test
     public void initTest(){
-        assertEquals(drone.staticPoint(),new Point(0,0));
+        assertEquals(drone.getCoordinates(),new Point(0,0));
         assertEquals(drone.getBattery(), 10000);
         assertEquals(drone.getDirection(), Direction.E);
     }
     @Test
     public void forwardTest(){
         drone.goForward();
-        assertEquals(drone.staticPoint(), new Point(1, 0));
+        assertEquals(drone.getCoordinates(), new Point(1, 0));
 
     }
     @Test
     public void turnTest(){
         drone.turnRight();
-        assertEquals(drone.staticPoint(), new Point(1, 1));
+        assertEquals(drone.getCoordinates(), new Point(1, 1));
         assertEquals(drone.getDirection(),Direction.S);
         drone.turnLeft();
-        assertEquals(drone.staticPoint(), new Point(2, 2));
+        assertEquals(drone.getCoordinates(), new Point(2, 2));
         assertEquals(drone.getDirection(),Direction.E);
     }
     @Test
