@@ -1,0 +1,130 @@
+@startuml
+
+package "ca.mcmaster.se2aa4.island.team209" {
+    class Runner {
+        - main(String[]): void
+    }
+    class Point {
+        - x: int
+        - y: int
+        + Point(int, int)
+        + equals(Object): boolean
+    }
+    interface Movement {
+        + needsInstruction(): boolean
+        + goDirection(Direction): void
+        + goRight(): void
+        + goLeft(): void
+        + goForward(): void
+        + useRadar(Direction): void
+        + scan(): void
+        + stop(): void
+        + getNextInstruction(): String
+    }
+    class JSONMover {
+        - decisions: Queue<String>
+        - drone: ExploringDrone
+        + JSONMover(ExploringDrone)
+        + goRight(): void
+        + goLeft(): void
+        + goForward(): void
+        + useRadar(Direction): void
+        + needsInstruction(): boolean
+        + goDirection(Direction): void
+        + scan(): void
+        + stop(): void
+        + getNextInstruction(): String
+    }
+    class ExploringDrone {
+        - lastScan: Direction
+        + ExploringDrone(int, int, int, Direction)
+        + turnRight(): void
+        + turnLeft(): void
+        + goForward(): void
+        + getLastScan(): Direction
+        + setLastScan(Direction): void
+        + staticPoint(): Point
+    }
+    class Drone {
+        - coords: Point
+        - battery: int
+        - myDir: Direction
+        + Drone(int, int, int, Direction)
+        + getCoordinates(): Point
+        + getBattery(): int
+        + getDirection(): Direction
+        + loseBattery(int): void
+    }
+    enum Direction {
+        N
+        E
+        S
+        W
+    }
+}
+
+package "ca.mcmaster.se2aa4.island.team209.Radio" {
+    class IslandAlgorithm {
+        - distance_to_edge: int
+        - distance_to_land: int
+        - poiHandler: POIHandler
+        - drone: ExploringDrone
+        - data: JSONObject
+        - state: State
+        - logger: Logger
+        - scan_direction: Direction
+        - scan_start_location: Point
+        - scan_start: boolean
+        - mover: Movement
+        + IslandAlgorithm(String)
+        + decision(): String
+        + takeInfo(String): void
+        + finalReport(): String
+    }
+    interface ExploreAlgorithm {
+        + decision(): String
+        + takeInfo(String): void
+        + finalReport(): String
+    }
+    class Explorer {
+        - control: ExploreAlgorithm
+        + initialize(String): void
+        + takeDecision(): String
+        + acknowledgeResults(String): void
+        + deliverFinalReport(): String
+    }
+}
+
+package "ca.mcmaster.se2aa4.island.team209.POI" {
+    class NearestCreekToSitePOIHandler {
+        - creeks: List<POI>
+        - site: POI
+        + NearestCreekToSitePOIHandler()
+        + addPoint(String, POI): void
+        + getReport(): String
+    }
+    class POI {
+        - location: Point
+        - name: String
+        + POI(String, Point)
+        + closerPoint(POI, POI): POI
+    }
+    interface POIHandler {
+        + addPoint(String, POI): void
+        + getReport(): String
+    }
+}
+
+Runner --> Movement
+Runner --> Explorer
+Explorer --> ExploreAlgorithm
+Explorer --> IslandAlgorithm
+IslandAlgorithm --> Movement
+IslandAlgorithm --> POIHandler
+ExploringDrone --> Direction
+JSONMover --> Direction
+Drone --> Point
+Explorer --> Logger
+IslandAlgorithm --> Logger
+Explorer --> JSONObject
+IslandAlgorithm --> JSONObject
