@@ -1,8 +1,8 @@
 package ca.mcmaster.se2aa4.island.team209;
 
-
 public interface Movement {
     boolean needsInstruction();
+
     void goDirection(Direction direction);
 
     void goRight();
@@ -16,5 +16,6 @@ public interface Movement {
     void scan();
 
     void stop();
+
     String getNextInstruction();
 }
