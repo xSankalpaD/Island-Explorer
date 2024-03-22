@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team209;
+package ca.mcmaster.se2aa4.island.team209.Radio;
 
 import java.io.StringReader;
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +28,7 @@ public class Explorer implements IExplorerRaid {
     @Override
     public String takeDecision() {
         String decision = control.decision();
-        logger.info("** Decision: {}",decision);
+        logger.info("** Decision: {}", decision);
         return decision;
     }
 
@@ -48,7 +48,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String deliverFinalReport() {
-        logger.info("Final report: "+control.finalReport());
+        logger.info("Final report: " + control.finalReport());
         return control.finalReport();
     }
 

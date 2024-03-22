@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team209;
+package ca.mcmaster.se2aa4.island.team209.Radio;
 
 import static eu.ace_design.island.runner.Runner.run;
 
