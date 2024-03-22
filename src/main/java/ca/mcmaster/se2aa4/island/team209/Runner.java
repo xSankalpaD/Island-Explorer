@@ -1,8 +1,10 @@
-package ca.mcmaster.se2aa4.island.team209.Radio;
+package ca.mcmaster.se2aa4.island.team209;
 
 import static eu.ace_design.island.runner.Runner.run;
 
 import java.io.File;
+
+import ca.mcmaster.se2aa4.island.team209.Radio.Explorer;
 
 public class Runner {
 

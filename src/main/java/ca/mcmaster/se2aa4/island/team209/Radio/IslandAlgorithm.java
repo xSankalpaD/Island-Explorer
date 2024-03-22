@@ -83,7 +83,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         drone.loseBattery(mixed_info.getInt("cost"));
         data = mixed_info.getJSONObject("extras");
         if (scan_start && scan_start_location.equals(drone.getCoordinates())) {// if whole island is scanned will arrive
-                                                                               // at same location.
+            // at same location.
             state = State.stop;
         }
         if (data.has("creeks")) { // check for creeks
