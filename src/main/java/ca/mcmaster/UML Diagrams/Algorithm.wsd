@@ -1,4 +1,4 @@
-@startuml
+@startuml Algorithm
 
 package "ca.mcmaster.se2aa4.island.team209" {
     class Runner {
@@ -45,7 +45,7 @@ package "ca.mcmaster.se2aa4.island.team209" {
         + setLastScan(Direction): void
         + staticPoint(): Point
     }
-    class Drone {
+    abstract class Drone {
         - coords: Point
         - battery: int
         - myDir: Direction
@@ -115,15 +115,21 @@ package "ca.mcmaster.se2aa4.island.team209.POI" {
     }
 }
 
-Runner --> Movement
-Runner --> Explorer
-Explorer --> ExploreAlgorithm
-IslandAlgorithm --> Movement
-IslandAlgorithm --> POIHandler
-IslandAlgorithm --> Movement
-IslandAlgorithm --> Logger
-IslandAlgorithm --> JSONObject
+
+IslandAlgorithm *--  Movement
+IslandAlgorithm *--  POIHandler
+IslandAlgorithm *--  ExploringDrone
+IslandAlgorithm *--  Point
+IslandAlgorithm *--  Direction
 IslandAlgorithm ..|> ExploreAlgorithm
-JSONMover --> Movement
-ExploringDrone --> Direction
-Drone --> Point
+Explorer *-- ExploreAlgorithm
+POI *-- Point
+ExploringDrone *-- Direction
+ExploringDrone *-- Point
+ExploringDrone --|> Drone
+JSONMover ..|> Movement
+JSONMover *-- ExploringDrone
+NearestCreekToSitePOIHandler ..|> POIHandler
+NearestCreekToSitePOIHandler *-- POI
+
+

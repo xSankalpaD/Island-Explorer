@@ -1,4 +1,4 @@
-@startuml
+@startuml Direction
 
 package "ca.mcmaster.se2aa4.island.team209" {
     abstract class Drone {

@@ -1,4 +1,4 @@
-@startuml
+@startuml POI
 
 package "ca.mcmaster.se2aa4.island.team209" {
     interface POIHandler {

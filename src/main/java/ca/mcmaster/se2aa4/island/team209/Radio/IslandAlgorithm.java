@@ -66,7 +66,9 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                 case preTurn -> decision_preTurn();
                 case turnToOther -> decision_turnToOther();
                 case stop -> mover.stop();
+                case checkTurn -> mover.stop();
             }
+
         }
         if (mover.needsInstruction()) {// if something has gone and the drone does not have valid instructions
             logger.info("no valid instructions, Stopping");
@@ -172,6 +174,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                     }
                 }
             }
+            default -> throw new IllegalArgumentException("Unexpected value: " + state);
         }
     }
 
@@ -212,7 +215,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
             }
             mover.scan();
             state = State.scanStrip;
-            // scan_direction = drone.getDirection().left();
+
         }
     }
 
