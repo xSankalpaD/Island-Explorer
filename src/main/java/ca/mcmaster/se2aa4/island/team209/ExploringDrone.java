@@ -1,12 +1,13 @@
 package ca.mcmaster.se2aa4.island.team209;
 
-public class ExploringDrone extends Drone {
+public class ExploringDrone {
     private Direction lastScan;
     private final Point coords;
     private Direction myDir;
+    private int battery;
 
     public ExploringDrone(int x, int y, int Battery, Direction dir){
-        super(Battery);
+        battery = Battery;
         this.coords = new Point(x, y);
         this.myDir = dir;
     }
@@ -70,6 +71,12 @@ public class ExploringDrone extends Drone {
             case S -> coords.y++;
             default -> myDir = Direction.N;
         }
+    }
+    public int getBattery() {
+        return battery;
+    }
+    public void loseBattery(int amount) {
+        battery -= amount;
     }
     public Direction getLastScan(){
         return lastScan;
