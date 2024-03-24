@@ -1,6 +1,6 @@
 @startuml POI
 
-package "ca.mcmaster.se2aa4.island.team209" {
+package "ca.mcmaster.se2aa4.island.team209.POI" {
     interface POIHandler {
         + addPoint(type: String, poi: POI)
         + getReport(): String
@@ -23,6 +23,11 @@ package "ca.mcmaster.se2aa4.island.team209" {
         + getReport(): String
     }
 
+    
+
+    
+}
+package "ca.mcmaster.se2aa4.island.team209.Position" {
     class Point {
         - x: int
         - y: int
@@ -30,10 +35,9 @@ package "ca.mcmaster.se2aa4.island.team209" {
         + Point(x: int, y: int)
         + equals(ob: Object): boolean
     }
-
-    POIHandler <|.. NearestCreekToSitePOIHandler
-    NearestCreekToSitePOIHandler *-- POI
-    POI "1" *--> "0..1" Point
 }
 
+POIHandler <|.. NearestCreekToSitePOIHandler
+NearestCreekToSitePOIHandler *-- POI
+POI "1" *--> "0..1" Point
 @enduml
