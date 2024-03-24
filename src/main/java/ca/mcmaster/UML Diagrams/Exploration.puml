@@ -1,0 +1,35 @@
+@startuml Exploration
+
+actor RescueCommandCenter as radio
+
+participant Explorer
+participant IslandAlgorithm
+participant JSONMover
+participant ExploringDrone
+
+radio -> Explorer: takeDecision()
+Explorer -> IslandAlgorithm: decision()
+IslandAlgorithm -> Explorer
+
+radio -> Explorer: acknowledgeResults()
+Explorer -> IslandAlgorithm: takeInfo()
+IslandAlgorithm -> Explorer
+
+radio -> Explorer: deliverFinalReport()
+Explorer -> IslandAlgorithm: finalReport()
+IslandAlgorithm -> Explorer
+
+IslandAlgorithm -> IslandAlgorithm: state
+
+
+alt state == stop
+JSONMover -> IslandAlgorithm: stop()
+
+else state == findWidth
+JSONMover -> IslandAlgorithm: radioForward
+
+else 
+JSONMover -> IslandAlgorithm: go()
+end
+end
+@enduml
