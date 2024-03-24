@@ -3,12 +3,17 @@ package ca.mcmaster.se2aa4.island.team209;
 import static eu.ace_design.island.runner.Runner.run;
 
 import java.io.File;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ca.mcmaster.se2aa4.island.team209.Radio.Explorer;
 
 public class Runner {
 
+    private static final Logger logger = LogManager.getLogger();
+
     public static void main(String[] args) {
+
         String filename = args[0];
         try {
             run(Explorer.class)
@@ -22,9 +27,9 @@ public class Runner {
                     .withName("Island")
                     .fire();
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            logger.error("An error occurred: {}", e.getMessage());
             e.printStackTrace(System.err);
-            System.exit(1);
+            logger.error("Exiting application with error status");
         }
     }
 

@@ -15,26 +15,26 @@ public class PointTest {
         Point point3 = new Point(3, 4);
 
         // Test equals with itself
-        assertTrue(point1.equals(point1));
+        assertEquals(point1, point1);
 
         // Test equals with an equal point
-        assertTrue(point1.equals(point2));
-        assertTrue(point2.equals(point1));
+        assertEquals(point1, point2);
+        assertEquals(point2, point1);
 
         // Test equals with different points
-        assertFalse(point1.equals(point3));
-        assertFalse(point2.equals(point3));
+        assertNotEquals(point1, point3);
+        assertNotEquals(point2, point3);
     }
 
     @Test
     public void testNotEqualsNull() {
         Point point1 = new Point(1, 2);
-        assertFalse(point1.equals(null));
+        assertNotEquals(null, point1);
     }
 
     @Test
     public void testNotEqualsDifferentClass() {
         Point point1 = new Point(1, 2);
-        assertFalse(point1.equals("test"));
+        assertNotEquals("test", point1);
     }
 }

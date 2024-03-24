@@ -18,38 +18,37 @@ public class ExploringDroneTest {
 
     @Test
     public void initTest() {
-        assertEquals(drone.getCoordinates(), new Point(0, 0));
-        assertEquals(drone.getBattery(), 10000);
-        assertEquals(drone.getDirection(), Direction.E);
+        assertEquals(new Point(0, 0), drone.getCoordinates());
+        assertEquals(10000, drone.getBattery());
+        assertEquals(Direction.E, drone.getDirection());
     }
 
     @Test
     public void forwardTest() {
         drone.goForward();
-        assertEquals(drone.getCoordinates(), new Point(1, 0));
-
+        assertEquals(new Point(1, 0), drone.getCoordinates());
     }
 
     @Test
     public void turnTest() {
         drone.turnRight();
-        assertEquals(drone.getCoordinates(), new Point(1, 1));
-        assertEquals(drone.getDirection(), Direction.S);
+        assertEquals(new Point(1, 1), drone.getCoordinates());
+        assertEquals(Direction.S, drone.getDirection());
         drone.turnLeft();
-        assertEquals(drone.getCoordinates(), new Point(2, 2));
-        assertEquals(drone.getDirection(), Direction.E);
+        assertEquals(new Point(2, 2), drone.getCoordinates());
+        assertEquals(Direction.E, drone.getDirection());
     }
 
     @Test
     public void scanTest() {
         drone.setLastScan(Direction.W);
-        assertEquals(drone.getLastScan(), Direction.W);
+        assertEquals(Direction.W, drone.getLastScan());
     }
 
     @Test
     public void batteryTest() {
-        assertEquals(drone.getBattery(), 10000);
+        assertEquals(10000, drone.getBattery());
         drone.loseBattery(1000);
-        assertEquals(drone.getBattery(), 9000);
+        assertEquals(9000, drone.getBattery());
     }
 }

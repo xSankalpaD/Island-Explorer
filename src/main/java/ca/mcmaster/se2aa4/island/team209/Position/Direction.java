@@ -6,20 +6,6 @@ public enum Direction {
     S,
     W;
 
-    public String toString() {
-        switch (this) {
-            case N:
-                return "N";
-            case S:
-                return "S";
-            case W:
-                return "W";
-            default:
-                return "E";
-        }
-
-    }
-
     public Direction right() {
         switch (this) {
             case E:
