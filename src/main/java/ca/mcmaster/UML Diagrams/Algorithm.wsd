@@ -4,9 +4,7 @@ package "ca.mcmaster.se2aa4.island.team209" {
     class Runner {
         - main(String[]): void
     }
-    class Point {
-        
-    }
+    
     interface Movement {
         + needsInstruction(): boolean
         + goDirection(Direction): void
@@ -19,38 +17,14 @@ package "ca.mcmaster.se2aa4.island.team209" {
         + getNextInstruction(): String
     }
     class JSONMover {
-        + goRight(): void
-        + goLeft(): void
-        + goForward(): void
-        + useRadar(Direction): void
-        + needsInstruction(): boolean
-        + goDirection(Direction): void
-        + scan(): void
-        + stop(): void
-        + getNextInstruction(): String
+        
     }
     class ExploringDrone {
         
-        + ExploringDrone(int, int, int, Direction)
-        + turnRight(): void
-        + turnLeft(): void
-        + goForward(): void
-        + getLastScan(): Direction
-        + setLastScan(Direction): void
-        + staticPoint(): Point
-    }
-    abstract class Drone {
-        + getCoordinates(): Point
-        + getBattery(): int
-        + getDirection(): Direction
         
     }
-    enum Direction {
-        N
-        E
-        S
-        W
-    }
+    
+    
 }
 
 package "ca.mcmaster.se2aa4.island.team209.Radio" {
@@ -66,8 +40,7 @@ package "ca.mcmaster.se2aa4.island.team209.Radio" {
         + finalReport(): String
     }
     class Explorer {
-        - control: ExploreAlgorithm
-        
+                
         + takeDecision(): String
         + acknowledgeResults(String): void
         + deliverFinalReport(): String
@@ -89,6 +62,17 @@ package "ca.mcmaster.se2aa4.island.team209.POI" {
     }
 }
 
+package "ca.mcmaster.se2aa4.island.team209.Position" {
+    class Point {
+        
+    }
+    enum Direction {
+        N
+        E
+        S
+        W
+    }
+}
 
 IslandAlgorithm *--  Movement
 IslandAlgorithm *--  POIHandler
@@ -97,13 +81,13 @@ IslandAlgorithm *--  Point
 IslandAlgorithm *--  Direction
 IslandAlgorithm ..|> ExploreAlgorithm
 Explorer *-- ExploreAlgorithm
-POI *-- Point
+POI "1" *--> "0..1" Point
 ExploringDrone *-- Direction
 ExploringDrone *-- Point
-ExploringDrone --|> Drone
 JSONMover ..|> Movement
 JSONMover *-- ExploringDrone
 NearestCreekToSitePOIHandler ..|> POIHandler
 NearestCreekToSitePOIHandler *-- POI
+ Runner --> Explorer : References
 
 

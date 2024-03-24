@@ -6,11 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import ca.mcmaster.se2aa4.island.team209.Direction;
+import ca.mcmaster.se2aa4.island.team209.Position.Direction;
+import ca.mcmaster.se2aa4.island.team209.Position.Point;
 import ca.mcmaster.se2aa4.island.team209.ExploringDrone;
 import ca.mcmaster.se2aa4.island.team209.JSONMover;
 import ca.mcmaster.se2aa4.island.team209.Movement;
-import ca.mcmaster.se2aa4.island.team209.Point;
 import ca.mcmaster.se2aa4.island.team209.POI.NearestCreekToSitePOIHandler;
 import ca.mcmaster.se2aa4.island.team209.POI.POI;
 import ca.mcmaster.se2aa4.island.team209.POI.POIHandler;
@@ -204,7 +204,8 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     }
 
     private void decision_moveToIsland() {
-        if (distance_to_land == 1) mover.scan(); // Later addition because some land edges were not scanned
+        if (distance_to_land == 1)
+            mover.scan(); // Later addition because some land edges were not scanned
         if (distance_to_land != 0) {
             mover.goDirection(drone.getLastScan());
             distance_to_land--;

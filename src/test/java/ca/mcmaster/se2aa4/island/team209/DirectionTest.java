@@ -2,6 +2,8 @@ package ca.mcmaster.se2aa4.island.team209;
 
 import org.junit.jupiter.api.Test;
 
+import ca.mcmaster.se2aa4.island.team209.Position.Direction;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DirectionTest {

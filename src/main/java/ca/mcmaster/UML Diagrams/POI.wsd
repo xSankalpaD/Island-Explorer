@@ -32,7 +32,7 @@ package "ca.mcmaster.se2aa4.island.team209" {
     }
 
     POIHandler <|.. NearestCreekToSitePOIHandler
-    POI <-- NearestCreekToSitePOIHandler
+    NearestCreekToSitePOIHandler *-- POI
     POI "1" *--> "0..1" Point
 }
 

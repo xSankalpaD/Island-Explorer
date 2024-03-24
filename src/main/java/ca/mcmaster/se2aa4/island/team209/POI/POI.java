@@ -1,7 +1,8 @@
 package ca.mcmaster.se2aa4.island.team209.POI;
 
-import ca.mcmaster.se2aa4.island.team209.Point;
 import java.lang.Math;
+
+import ca.mcmaster.se2aa4.island.team209.Position.Point;
 
 public class POI {
     final Point location;

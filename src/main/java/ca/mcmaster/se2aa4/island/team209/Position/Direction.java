@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team209;
+package ca.mcmaster.se2aa4.island.team209.Position;
 
 public enum Direction {
     N,

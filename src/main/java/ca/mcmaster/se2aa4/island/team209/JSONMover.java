@@ -3,13 +3,17 @@ package ca.mcmaster.se2aa4.island.team209;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
+import ca.mcmaster.se2aa4.island.team209.Position.Direction;
+
 public class JSONMover implements Movement {
     private final Queue<String> decisions;
     private final ExploringDrone drone;
-    public JSONMover(ExploringDrone Drone){
-        decisions=new ArrayDeque<>();
-        drone=Drone;
+
+    public JSONMover(ExploringDrone Drone) {
+        decisions = new ArrayDeque<>();
+        drone = Drone;
     }
+
     @Override
     public void goRight() {
         decisions.add("{ \"action\": \"heading\", \"parameters\": { \"direction\": \""
@@ -40,6 +44,7 @@ public class JSONMover implements Movement {
     public boolean needsInstruction() {
         return decisions.isEmpty();
     }
+
     @Override
     public void goDirection(Direction direction) {
         if (direction == drone.getDirection()) {
@@ -55,16 +60,19 @@ public class JSONMover implements Movement {
         }
 
     }
+
     @Override
     public void scan() {
         decisions.add("{ \"action\": \"scan\" }");
     }
+
     @Override
     public void stop() {
         decisions.add("{ \"action\": \"stop\" }");
     }
+
     @Override
-    public String getNextInstruction(){
+    public String getNextInstruction() {
         return decisions.remove();
     }
 }
