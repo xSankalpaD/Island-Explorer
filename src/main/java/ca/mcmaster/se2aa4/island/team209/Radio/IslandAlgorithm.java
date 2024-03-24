@@ -204,6 +204,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
     }
 
     private void decision_moveToIsland() {
+        if (distance_to_land == 1) mover.scan(); // Later addition because some land edges were not scanned
         if (distance_to_land != 0) {
             mover.goDirection(drone.getLastScan());
             distance_to_land--;
