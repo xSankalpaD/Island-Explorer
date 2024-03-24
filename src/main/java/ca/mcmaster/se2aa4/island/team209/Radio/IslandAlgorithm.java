@@ -174,7 +174,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
                     }
                 }
             }
-            default -> throw new IllegalArgumentException("Unexpected value: " + state);
+
         }
     }
 
