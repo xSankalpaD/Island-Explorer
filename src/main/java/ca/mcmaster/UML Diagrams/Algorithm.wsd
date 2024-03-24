@@ -5,10 +5,7 @@ package "ca.mcmaster.se2aa4.island.team209" {
         - main(String[]): void
     }
     class Point {
-        - x: int
-        - y: int
-        + Point(int, int)
-        + equals(Object): boolean
+        
     }
     interface Movement {
         + needsInstruction(): boolean
@@ -22,9 +19,6 @@ package "ca.mcmaster.se2aa4.island.team209" {
         + getNextInstruction(): String
     }
     class JSONMover {
-        - decisions: Queue<String>
-        - drone: ExploringDrone
-        + JSONMover(ExploringDrone)
         + goRight(): void
         + goLeft(): void
         + goForward(): void
@@ -36,7 +30,7 @@ package "ca.mcmaster.se2aa4.island.team209" {
         + getNextInstruction(): String
     }
     class ExploringDrone {
-        - lastScan: Direction
+        
         + ExploringDrone(int, int, int, Direction)
         + turnRight(): void
         + turnLeft(): void
@@ -46,14 +40,10 @@ package "ca.mcmaster.se2aa4.island.team209" {
         + staticPoint(): Point
     }
     abstract class Drone {
-        - coords: Point
-        - battery: int
-        - myDir: Direction
-        + Drone(int, int, int, Direction)
         + getCoordinates(): Point
         + getBattery(): int
         + getDirection(): Direction
-        + loseBattery(int): void
+        
     }
     enum Direction {
         N
@@ -65,18 +55,7 @@ package "ca.mcmaster.se2aa4.island.team209" {
 
 package "ca.mcmaster.se2aa4.island.team209.Radio" {
     class IslandAlgorithm {
-        - distance_to_edge: int
-        - distance_to_land: int
-        - poiHandler: POIHandler
-        - drone: ExploringDrone
-        - data: JSONObject
-        - state: State
-        - logger: Logger
-        - scan_direction: Direction
-        - scan_start_location: Point
-        - scan_start: boolean
-        - mover: Movement
-        + IslandAlgorithm(String)
+        
         + decision(): String
         + takeInfo(String): void
         + finalReport(): String
@@ -88,7 +67,7 @@ package "ca.mcmaster.se2aa4.island.team209.Radio" {
     }
     class Explorer {
         - control: ExploreAlgorithm
-        + initialize(String): void
+        
         + takeDecision(): String
         + acknowledgeResults(String): void
         + deliverFinalReport(): String
@@ -97,15 +76,10 @@ package "ca.mcmaster.se2aa4.island.team209.Radio" {
 
 package "ca.mcmaster.se2aa4.island.team209.POI" {
     class NearestCreekToSitePOIHandler {
-        - creeks: List<POI>
-        - site: POI
-        + NearestCreekToSitePOIHandler()
-        + addPoint(String, POI): void
-        + getReport(): String
+        
     }
     class POI {
-        - location: Point
-        - name: String
+        
         + POI(String, Point)
         + closerPoint(POI, POI): POI
     }
