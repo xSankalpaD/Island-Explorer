@@ -4,32 +4,121 @@ actor RescueCommandCenter as radio
 
 participant Explorer
 participant IslandAlgorithm
-participant JSONMover
+participant Movement
 participant ExploringDrone
+participant POIHandler
 
+
+/'
+Initialize classes 
+'/
+radio --> Explorer: initialize()
+Explorer --> IslandAlgorithm: IslandAlgorithm(s: String)
+IslandAlgorithm --> ExploringDrone: ExploringDrone(x: int, y: int, battery: int, direction: Direction)
+ExploringDrone --> IslandAlgorithm
+IslandAlgorithm --> Movement: JSONMover(drone: ExploringDrone)
+Movement -->IslandAlgorithm
+IslandAlgorithm --> POIHandler: NearestCreekToSitePOIHandler()
+POIHandler --> IslandAlgorithm
+IslandAlgorithm --> Explorer
+Explorer --> radio
+
+/'
+Run loop that makes decision based on previous
+response and current status of mission
+'/
+
+loop until state == stop
+note over IslandAlgorithm, Movement
+Take actions based on previous responces
+and current stage of exploration (state)
+end note
 radio -> Explorer: takeDecision()
 Explorer -> IslandAlgorithm: decision()
-IslandAlgorithm -> Explorer
+
+alt Get command based on state and update state
+IslandAlgorithm -> Movement: goForward()
+else 
+IslandAlgorithm -> Movement: goDirection(d: Direction)
+else
+IslandAlgorithm -> Movement: useRadar(d: Direction)
+else
+IslandAlgorithm -> Movement: goRight()
+else
+IslandAlgorithm -> Movement: goLeft()
+else
+IslandAlgorithm -> Movement: scan()
+else
+IslandAlgorithm -> Movement: stop()
+end
+Movement -> Movement
+note left
+Add last instruction to queue
+end note
+alt
+Movement -> ExploringDrone: goForward()
+else
+Movement -> ExploringDrone: turnLeft()
+else
+Movement -> ExploringDrone: turnRight()
+end
+
+ExploringDrone -> Movement
+Movement -> IslandAlgorithm
+
+IslandAlgorithm -> Movement: getNextInstruction()
+Movement -> IslandAlgorithm: return top of queue (next command)
+
+IslandAlgorithm -> Explorer: return command
+Explorer-> radio: return JSON command
 
 radio -> Explorer: acknowledgeResults()
 Explorer -> IslandAlgorithm: takeInfo()
+IslandAlgorithm -> POIHandler: addPoint(type: String, p: POI)
+POIHandler -> IslandAlgorithm
+
+alt Get command & update state based on responce & current state
+IslandAlgorithm -> Movement: goForward()
+else 
+IslandAlgorithm -> Movement: goDirection(d: Direction)
+else
+IslandAlgorithm -> Movement: useRadar(d: Direction)
+else
+IslandAlgorithm -> Movement: goRight()
+else
+IslandAlgorithm -> Movement: goLeft()
+else
+IslandAlgorithm -> Movement: scan()
+else
+IslandAlgorithm -> Movement: stop()
+end
+Movement -> Movement
+note left
+Add last instruction to queue
+end note
+alt
+Movement -> ExploringDrone: goForward()
+else
+Movement -> ExploringDrone: turnLeft()
+else
+Movement -> ExploringDrone: turnRight()
+end
+
+ExploringDrone -> Movement
+Movement -> IslandAlgorithm
 IslandAlgorithm -> Explorer
+Explorer-> radio
+end
+
+/'
+Return Final Report
+'/
 
 radio -> Explorer: deliverFinalReport()
 Explorer -> IslandAlgorithm: finalReport()
-IslandAlgorithm -> Explorer
+IslandAlgorithm -> POIHandler: getReport()
+POIHandler -> IslandAlgorithm: return Points of Interest
+IslandAlgorithm -> Explorer: return Report
+Explorer -> radio
 
-IslandAlgorithm -> IslandAlgorithm: state
-
-
-alt state == stop
-JSONMover -> IslandAlgorithm: stop()
-
-else state == findWidth
-JSONMover -> IslandAlgorithm: radioForward
-
-else 
-JSONMover -> IslandAlgorithm: go()
-end
-end
 @enduml
