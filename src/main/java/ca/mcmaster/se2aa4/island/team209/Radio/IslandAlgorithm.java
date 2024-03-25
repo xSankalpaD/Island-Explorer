@@ -78,6 +78,7 @@ public class IslandAlgorithm implements ExploreAlgorithm {
         return mover.getNextInstruction();
     }
 
+    @SuppressWarnings("incomplete-switch")
     @Override
     public void takeInfo(String s) {
         JSONObject mixedInfo = new JSONObject(new JSONTokener(new StringReader(s)));
