@@ -1,4 +1,4 @@
-# [A2] Island ca.mcmaster.se2aa4.island.team00.Explorer
+# Island Explorer and Rescue
 
 - Authors:
   - [Sankalpa, Chhetri Dhakal](chhets1@mcmaster.ca) 
